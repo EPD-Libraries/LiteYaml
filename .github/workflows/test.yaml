@@ -41,10 +41,10 @@ jobs:
     - uses: actions/checkout@v2
     - uses: actions/cache@v2
       with:
-        path: VYaml.Unity/Library
-        key: Library-VYaml-${{ matrix.unityVersion }}
+        path: YamlLibrary.Unity/Library
+        key: Library-YamlLibrary-${{ matrix.unityVersion }}
         restore-keys: |
-          Library-VYaml-
+          Library-YamlLibrary-
           Library-
     - uses: game-ci/unity-test-runner@v4
       env:
@@ -52,6 +52,6 @@ jobs:
         UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         UNITY_LICENSE: ${{ secrets[matrix.license] }}
       with:
-        projectPath: ./VYaml.Unity
+        projectPath: ./YamlLibrary.Unity
         githubToken: ${{ secrets.GITHUB_TOKEN }}        
       
