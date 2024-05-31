@@ -17,10 +17,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\LiteYaml\LiteYaml.csproj" />
-        <ProjectReference Include="..\LiteYaml.SourceGenerator\LiteYaml.SourceGenerator.csproj">
-            <OutputItemType>Analyzer</OutputItemType>
-            <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-        </ProjectReference>
     </ItemGroup>
 
     <ItemGroup>
