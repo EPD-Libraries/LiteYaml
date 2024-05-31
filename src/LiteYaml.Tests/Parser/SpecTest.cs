@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using LiteYaml.Internal;
 using LiteYaml.Parser;
+using System.Text;
 
 namespace LiteYaml.Tests.Parser
 {
@@ -14,8 +15,7 @@ namespace LiteYaml.Tests.Parser
         [Test]
         public void Ex2_01_SeqScalars()
         {
-            AssertParseEvents(SpecExamples.Ex2_1, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex2_1, [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.SequenceStart),
@@ -25,14 +25,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.SequenceEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex2_02_MappingScalarsToScalars()
         {
-            AssertParseEvents(SpecExamples.Ex2_2, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex2_2,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -45,14 +45,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd)
-            });
+            ]);
         }
 
         [Test]
         public void Ex2_03_MappingScalarsToSequences()
         {
-            AssertParseEvents(SpecExamples.Ex2_3, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex2_3,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -71,14 +71,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex2_04_SequenceOfMappings()
         {
-            AssertParseEvents(SpecExamples.Ex2_4, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex2_4,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.SequenceStart),
@@ -101,14 +101,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.SequenceEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
-        public void kEx2_05_SequenceOfSequences()
+        public void Ex2_05_SequenceOfSequences()
         {
-            AssertParseEvents(SpecExamples.Ex2_5, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex2_5,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.SequenceStart),
@@ -130,14 +130,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.SequenceEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex2_06_MappingOfMappings()
         {
-            AssertParseEvents(SpecExamples.Ex2_6, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex2_6,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -158,14 +158,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex2_07_TwoDocumentsInAStream()
         {
-            AssertParseEvents(SpecExamples.Ex2_7, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex2_7,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.SequenceStart),
@@ -182,14 +182,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.SequenceEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex2_08_PlayByPlayFeed()
         {
-            AssertParseEvents(SpecExamples.Ex2_8, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex2_8,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -213,14 +213,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex2_09_SingleDocumentWithTwoComments()
         {
-            AssertParseEvents(SpecExamples.Ex2_9, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex2_9,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -237,14 +237,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex2_10_SimpleAnchor()
         {
-            AssertParseEvents(SpecExamples.Ex2_10, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex2_10,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -261,14 +261,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex2_11_MappingBetweenSequences()
         {
-            AssertParseEvents(SpecExamples.Ex2_11, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex2_11,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -292,14 +292,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex2_12_CompactNestedMapping()
         {
-            AssertParseEvents(SpecExamples.Ex2_12, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex2_12,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.SequenceStart),
@@ -324,40 +324,40 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.SequenceEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex2_13_InLiteralsNewlinesArePreserved()
         {
-            AssertParseEvents(SpecExamples.Ex2_13, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex2_13,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.Scalar, "\\//||\\/||\n// ||  ||__\n"),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex2_14_InFoldedScalarsNewlinesBecomeSpaces()
         {
-            AssertParseEvents(SpecExamples.Ex2_14, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex2_14,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.Scalar, "Mark McGwire's year was crippled by a knee injury.\n"),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex2_15_FoldedNewlinesArePreservedForMoreIndentedAndBlankLines()
         {
-            AssertParseEvents(SpecExamples.Ex2_15, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex2_15,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.Scalar, "Sammy Sosa completed another fine season with great stats.\n" +
@@ -368,14 +368,14 @@ namespace LiteYaml.Tests.Parser
                                               "What a year!\n"),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex2_16_IndentationDeterminesScope()
         {
-            AssertParseEvents(SpecExamples.Ex2_16, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex2_16,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -388,14 +388,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex2_17_QuotedScalars()
         {
-            AssertParseEvents(SpecExamples.Ex2_17, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex2_17,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -414,14 +414,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex2_18_MultiLIneFlowScalars()
         {
-            AssertParseEvents(SpecExamples.Ex2_18, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex2_18,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -432,14 +432,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex2_19_Integers()
         {
-            AssertParseEvents(SpecExamples.Ex2_19, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex2_19,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -454,14 +454,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex2_20_FloatingPoint()
         {
-            AssertParseEvents(SpecExamples.Ex2_20, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex2_20,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -478,14 +478,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex2_21_Miscellaneous()
         {
-            AssertParseEvents(SpecExamples.Ex2_21, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex2_21,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -501,14 +501,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex2_22_Timestamps()
         {
-            AssertParseEvents(SpecExamples.Ex2_22, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex2_22,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -523,14 +523,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex2_23_VariousExplicitTags()
         {
-            AssertParseEvents(SpecExamples.Ex2_23, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex2_23,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -548,14 +548,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex2_24_GlobalTags()
         {
-            AssertParseEvents(SpecExamples.Ex2_24, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex2_24,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.SequenceStart),
@@ -592,14 +592,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.SequenceEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex2_25_UnorderedSets()
         {
-            AssertParseEvents(SpecExamples.Ex2_25, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex2_25,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -612,14 +612,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex2_26_OrderedMappings()
         {
-            AssertParseEvents(SpecExamples.Ex2_26, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex2_26,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.SequenceStart),
@@ -638,14 +638,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.SequenceEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex2_27_Invoice()
         {
-            AssertParseEvents(SpecExamples.Ex2_27, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex2_27,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -705,14 +705,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex2_28_LogFile()
         {
-            AssertParseEvents(SpecExamples.Ex2_28, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex2_28,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -766,38 +766,38 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex5_01_ByteOrderMarkNoContent()
         {
-            AssertParseEvents(SpecExamples.Ex5_1, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex5_1,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex5_02_InvalidByteOrderMarkInContent()
         {
-            AssertParseEventsThenThrows<YamlTokenizerException>(SpecExamples.Ex5_2, new[]
-            {
+            AssertParseEventsThenThrows<YamlTokenizerException>(SpecExamples.Ex5_2,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.SequenceStart),
                 // TODO should probably throw after this token:
                 // Expect(ParseEventType.Scalar, "Invalid use of BOM"),
-            },
+            ],
             exceptionLike: "^BOM must be at the beginning of the stream");
         }
 
         [Test]
         public void Ex5_03_BlockStructureIndicators()
         {
-            AssertParseEvents(SpecExamples.Ex5_3, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex5_3,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -816,14 +816,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex5_04_FlowStructureIndicators()
         {
-            AssertParseEvents(SpecExamples.Ex5_4, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex5_4,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -842,14 +842,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex5_06_NodePropertyIndicators()
         {
-            AssertParseEvents(SpecExamples.Ex5_6, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex5_6,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -860,14 +860,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex5_07_BlockScalarIndicators()
         {
-            AssertParseEvents(SpecExamples.Ex5_7, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex5_7,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -878,14 +878,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex5_08_QuotedScalarIndicators()
         {
-            AssertParseEvents(SpecExamples.Ex5_8, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex5_8,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -896,28 +896,28 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
 
         }
 
         [Test]
         public void Ex5_11_LineBreakCharacters()
         {
-            AssertParseEvents(SpecExamples.Ex5_11, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex5_11,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.Scalar, "Line break (no glyph)\nLine break (glyphed)\n"),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex5_12_TabsAndSpaces()
         {
-            AssertParseEvents(SpecExamples.Ex5_12, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex5_12,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -930,14 +930,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex5_13_EscapedCharacters()
         {
-            AssertParseEvents(SpecExamples.Ex5_13, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex5_13,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.SequenceStart),
@@ -948,14 +948,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.SequenceEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex6_01_IndentationSpaces()
         {
-            AssertParseEvents(SpecExamples.Ex6_1, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex6_1,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -973,15 +973,15 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
 
         }
 
         [Test]
         public void Ex6_02_IndentationIndicators()
         {
-            AssertParseEvents(SpecExamples.Ex6_2, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex6_2,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -996,14 +996,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex6_03_SeparationSpaces()
         {
-            AssertParseEvents(SpecExamples.Ex6_3, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex6_3,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.SequenceStart),
@@ -1018,14 +1018,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.SequenceEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex6_04_LinePrefixes()
         {
-            AssertParseEvents(SpecExamples.Ex6_4, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex6_4,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -1038,14 +1038,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex6_05_EmptyLines()
         {
-            AssertParseEvents(SpecExamples.Ex6_5, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex6_5,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -1056,53 +1056,53 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex6_06_LineFolding()
         {
-            AssertParseEvents(SpecExamples.Ex6_6, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex6_6,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.Scalar, "trimmed\n\n\nas space"),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex6_07_BlockFolding()
         {
-            AssertParseEvents(SpecExamples.Ex6_7, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex6_7,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.Scalar, "foo \n\n\t bar\n\nbaz\n"),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex6_08_FlowFolding()
         {
-            AssertParseEvents(SpecExamples.Ex6_8, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex6_8,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.Scalar, " foo\nbar\nbaz "),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex6_09_SeparatedComment()
         {
-            AssertParseEvents(SpecExamples.Ex6_9, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex6_9,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -1111,24 +1111,24 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex6_10_CommentLines()
         {
-            AssertParseEvents(SpecExamples.Ex6_10, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex6_10,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex6_11_MultilineComments()
         {
-            AssertParseEvents(SpecExamples.Ex6_11, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex6_11,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -1137,14 +1137,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex6_12_SeparationSpaces()
         {
-            AssertParseEvents(SpecExamples.Ex6_12, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex6_12,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -1163,53 +1163,53 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex6_13_ReservedDirectives()
         {
-            AssertParseEvents(SpecExamples.Ex6_13, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex6_13,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.Scalar, "foo"),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex6_14_YamlDirective()
         {
-            AssertParseEvents(SpecExamples.Ex6_14, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex6_14,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.Scalar, "foo"),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex6_16_YamlDirective()
         {
-            AssertParseEvents(SpecExamples.Ex6_16, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex6_16,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.Scalar, "foo"),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex6_18_PrimaryTagHandle()
         {
-            AssertParseEvents(SpecExamples.Ex6_18, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex6_18,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.Scalar, "bar"),
@@ -1219,40 +1219,40 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.Scalar, "bar"),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex6_19_SecondaryTagHandle()
         {
-            AssertParseEvents(SpecExamples.Ex6_19, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex6_19,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.Scalar, "1 - 3"),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex6_20_TagHandles()
         {
-            AssertParseEvents(SpecExamples.Ex6_20, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex6_20,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.Scalar, "bar"),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex6_21_LocalTagPrefix()
         {
-            AssertParseEvents(SpecExamples.Ex6_21, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex6_21,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.Scalar, "fluorescent"),
@@ -1262,15 +1262,15 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.Scalar, "green"),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
 
         }
 
         [Test]
         public void Ex6_22_GlocalTagPrefix()
         {
-            AssertParseEvents(SpecExamples.Ex6_22, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex6_22,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.SequenceStart),
@@ -1278,14 +1278,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.SequenceEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex6_23_NodeProperties()
         {
-            AssertParseEvents(SpecExamples.Ex6_23, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex6_23,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -1296,14 +1296,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex6_24_VerbatimTags()
         {
-            AssertParseEvents(SpecExamples.Ex6_24, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex6_24,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -1312,14 +1312,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex6_26_TagShortHands()
         {
-            AssertParseEvents(SpecExamples.Ex6_26, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex6_26,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.SequenceStart),
@@ -1329,18 +1329,16 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.SequenceEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         [Ignore("Not Supported")]
         public void Ex6_27_InvalidTagShorthands()
         {
-            Assert.Throws<YamlParserException>(() =>
-            {
-                var parser = YamlParser.FromBytes(StringEncoding.Utf8.GetBytes(SpecExamples.Ex6_27b));
-                while (parser.Read())
-                {
+            Assert.Throws<YamlParserException>(() => {
+                var parser = YamlParser.FromBytes(Encoding.UTF8.GetBytes(SpecExamples.Ex6_27b));
+                while (parser.Read()) {
                 }
             });
         }
@@ -1348,8 +1346,8 @@ namespace LiteYaml.Tests.Parser
         [Test]
         public void Ex6_28_NonSpecificTags()
         {
-            AssertParseEvents(SpecExamples.Ex6_28, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex6_28,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.SequenceStart),
@@ -1359,14 +1357,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.SequenceEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex6_29_NodeAnchors()
         {
-            AssertParseEvents(SpecExamples.Ex6_29, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex6_29,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -1377,14 +1375,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex7_01_AliasNodes()
         {
-            AssertParseEvents(SpecExamples.Ex7_1, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex7_1,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -1399,14 +1397,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex7_02_EmptyNodes()
         {
-            AssertParseEvents(SpecExamples.Ex7_2, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex7_2,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -1417,14 +1415,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex7_03_CompletelyEmptyNodes()
         {
-            AssertParseEvents(SpecExamples.Ex7_3, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex7_3,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -1435,14 +1433,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex7_04_DoubleQuotedImplicitKeys()
         {
-            AssertParseEvents(SpecExamples.Ex7_4, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex7_4,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -1456,53 +1454,53 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex7_05_DoubleQuotedLineBreaks()
         {
-            AssertParseEvents(SpecExamples.Ex7_5, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex7_5,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.Scalar, "folded to a space,\nto a line feed, or \t \tnon-content"),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex7_06_DoubleQuotedLines()
         {
-            AssertParseEvents(SpecExamples.Ex7_6, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex7_6,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.Scalar, " 1st non-empty\n2nd non-empty 3rd non-empty "),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex7_07_SingleQuotedCharacters()
         {
-            AssertParseEvents(SpecExamples.Ex7_7, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex7_7,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.Scalar, "here's to \"quotes\""),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex7_08_SingleQuotedImplicitKeys()
         {
-            AssertParseEvents(SpecExamples.Ex7_8, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex7_8,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -1516,27 +1514,27 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex7_09_SingleQuotedLines()
         {
-            AssertParseEvents(SpecExamples.Ex7_9, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex7_9,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.Scalar, " 1st non-empty\n2nd non-empty 3rd non-empty "),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex7_10_PlainCharacters()
         {
-            AssertParseEvents(SpecExamples.Ex7_10, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex7_10,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.SequenceStart),
@@ -1555,14 +1553,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.SequenceEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex7_11_PlainImplicitKeys()
         {
-            AssertParseEvents(SpecExamples.Ex7_11, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex7_11,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -1576,27 +1574,27 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex7_12_PlainLines()
         {
-            AssertParseEvents(SpecExamples.Ex7_12, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex7_12,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.Scalar, "1st non-empty\n2nd non-empty 3rd non-empty"),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex7_13_FlowSequence()
         {
-            AssertParseEvents(SpecExamples.Ex7_13, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex7_13,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.SequenceStart),
@@ -1611,14 +1609,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.SequenceEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex7_14_FlowSequenceEntries()
         {
-            AssertParseEvents(SpecExamples.Ex7_14, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex7_14,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.SequenceStart),
@@ -1635,14 +1633,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.SequenceEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex7_15_FlowMappings()
         {
-            AssertParseEvents(SpecExamples.Ex7_15, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex7_15,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.SequenceStart),
@@ -1661,14 +1659,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.SequenceEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex7_16_FlowMappingEntries()
         {
-            AssertParseEvents(SpecExamples.Ex7_16, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex7_16,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -1681,14 +1679,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex7_17_FlowMappingSeparateValues()
         {
-            AssertParseEvents(SpecExamples.Ex7_17, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex7_17,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -1703,14 +1701,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex7_18_FlowMappingAdjacentValues()
         {
-            AssertParseEvents(SpecExamples.Ex7_18, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex7_18,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -1723,14 +1721,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex7_19_SinglePairFlowMappings()
         {
-            AssertParseEvents(SpecExamples.Ex7_19, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex7_19,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.SequenceStart),
@@ -1741,14 +1739,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.SequenceEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex7_20_SinglePairExplicitEntry()
         {
-            AssertParseEvents(SpecExamples.Ex7_20, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex7_20,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.SequenceStart),
@@ -1759,15 +1757,15 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.SequenceEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         [Ignore("")]
         public void Ex7_21_SinglePairImplicitEntries()
         {
-            AssertParseEvents(SpecExamples.Ex7_21, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex7_21,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.SequenceStart),
@@ -1794,17 +1792,15 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.SequenceEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex7_22_InvalidImplicitKeys()
         {
-            Assert.Throws<YamlParserException>(() =>
-            {
-                var parser = YamlParser.FromBytes(StringEncoding.Utf8.GetBytes(SpecExamples.Ex7_22));
-                while (parser.Read())
-                {
+            Assert.Throws<YamlParserException>(() => {
+                var parser = YamlParser.FromBytes(Encoding.UTF8.GetBytes(SpecExamples.Ex7_22));
+                while (parser.Read()) {
                 }
             });
         }
@@ -1812,8 +1808,8 @@ namespace LiteYaml.Tests.Parser
         [Test]
         public void Ex7_23_FlowContent()
         {
-            AssertParseEvents(SpecExamples.Ex7_23, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex7_23,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.SequenceStart),
@@ -1831,14 +1827,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.SequenceEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex7_24_FlowNodes()
         {
-            AssertParseEvents(SpecExamples.Ex7_24, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex7_24,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.SequenceStart),
@@ -1850,14 +1846,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.SequenceEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex8_01_BlockScalarHeader()
         {
-            AssertParseEvents(SpecExamples.Ex8_1, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex8_1,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.SequenceStart),
@@ -1868,15 +1864,15 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.SequenceEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         [Ignore("")]
         public void Ex8_02_BlockIndentationHeader()
         {
-            AssertParseEvents(SpecExamples.Ex8_2, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex8_2,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.SequenceStart),
@@ -1887,33 +1883,27 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.SequenceEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex8_03_InvalidBlockScalarIndentationIndicators()
         {
-            Assert.Throws<YamlParserException>(() =>
-            {
-                var parser = YamlParser.FromBytes(StringEncoding.Utf8.GetBytes(SpecExamples.Ex8_3a));
-                while (parser.Read())
-                {
+            Assert.Throws<YamlParserException>(() => {
+                var parser = YamlParser.FromBytes(Encoding.UTF8.GetBytes(SpecExamples.Ex8_3a));
+                while (parser.Read()) {
                 }
             });
 
-            Assert.Throws<YamlParserException>(() =>
-            {
-                var parser = YamlParser.FromBytes(StringEncoding.Utf8.GetBytes(SpecExamples.Ex8_3b));
-                while (parser.Read())
-                {
+            Assert.Throws<YamlParserException>(() => {
+                var parser = YamlParser.FromBytes(Encoding.UTF8.GetBytes(SpecExamples.Ex8_3b));
+                while (parser.Read()) {
                 }
             });
 
-            Assert.Throws<YamlParserException>(() =>
-            {
-                var parser = YamlParser.FromBytes(StringEncoding.Utf8.GetBytes(SpecExamples.Ex8_3c));
-                while (parser.Read())
-                {
+            Assert.Throws<YamlParserException>(() => {
+                var parser = YamlParser.FromBytes(Encoding.UTF8.GetBytes(SpecExamples.Ex8_3c));
+                while (parser.Read()) {
                 }
             });
         }
@@ -1921,8 +1911,8 @@ namespace LiteYaml.Tests.Parser
         [Test]
         public void Ex8_04_ChompingFinalLineBreak()
         {
-            AssertParseEvents(SpecExamples.Ex8_4, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex8_4,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -1935,14 +1925,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex8_05_ChompingTrailingLines()
         {
-            AssertParseEvents(SpecExamples.Ex8_5, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex8_5,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -1955,14 +1945,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex8_06_EmptyScalarChomping()
         {
-            AssertParseEvents(SpecExamples.Ex8_6, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex8_6,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -1975,109 +1965,109 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex8_07_LiteralScalar()
         {
-            AssertParseEvents(SpecExamples.Ex8_7, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex8_7,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.Scalar, "literal\n\ttext\n"),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex8_08_LiteralContent()
         {
-            AssertParseEvents(SpecExamples.Ex8_8, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex8_8,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.Scalar, "\n\nliteral\n \n\ntext\n"),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex8_09_FoldedScalar()
         {
-            AssertParseEvents(SpecExamples.Ex8_9, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex8_9,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.Scalar, "folded text\n"),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex8_10_FoldedLines()
         {
-            AssertParseEvents(SpecExamples.Ex8_10, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex8_10,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.Scalar,
                     "\nfolded line\nnext line\n  * bullet\n\n  * list\n  * lines\n\nlast line\n"),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex8_11_MoreIndentedLines()
         {
-            AssertParseEvents(SpecExamples.Ex8_11, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex8_11,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.Scalar,
                     "\nfolded line\nnext line\n  * bullet\n\n  * list\n  * lines\n\nlast line\n"),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex8_12_EmptySeparationLines()
         {
-            AssertParseEvents(SpecExamples.Ex8_12, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex8_12,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.Scalar,
                     "\nfolded line\nnext line\n  * bullet\n\n  * list\n  * lines\n\nlast line\n"),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex8_13_FinalEmptyLines()
         {
-            AssertParseEvents(SpecExamples.Ex8_13, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex8_13,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.Scalar,
                     "\nfolded line\nnext line\n  * bullet\n\n  * list\n  * lines\n\nlast line\n"),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex8_14_BlockSequence()
         {
-            AssertParseEvents(SpecExamples.Ex8_14, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex8_14,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -2092,14 +2082,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex8_15_BlockSequenceEntryTypes()
         {
-            AssertParseEvents(SpecExamples.Ex8_15, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex8_15,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.SequenceStart),
@@ -2116,14 +2106,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.SequenceEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex8_16_BlockMappings()
         {
-            AssertParseEvents(SpecExamples.Ex8_16, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex8_16,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -2135,14 +2125,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex8_17_ExplicitBlockMappingEntries()
         {
-            AssertParseEvents(SpecExamples.Ex8_17, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex8_17,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -2156,14 +2146,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex8_18_ImplicitBlockMappingEntries()
         {
-            AssertParseEvents(SpecExamples.Ex8_18, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex8_18,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -2178,14 +2168,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex8_19_CompactBlockMappings()
         {
-            AssertParseEvents(SpecExamples.Ex8_19, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex8_19,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.SequenceStart),
@@ -2206,14 +2196,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.SequenceEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex8_20_BlockNodeTypes()
         {
-            AssertParseEvents(SpecExamples.Ex8_20, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex8_20,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.SequenceStart),
@@ -2226,14 +2216,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.SequenceEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex8_21_BlockScalarNodes()
         {
-            AssertParseEvents(SpecExamples.Ex8_21, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex8_21,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -2244,14 +2234,14 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         [Test]
         public void Ex8_22_BlockCollectionNodes()
         {
-            AssertParseEvents(SpecExamples.Ex8_22, new[]
-            {
+            AssertParseEvents(SpecExamples.Ex8_22,
+            [
                 Expect(ParseEventType.StreamStart),
                 Expect(ParseEventType.DocumentStart),
                 Expect(ParseEventType.MappingStart),
@@ -2270,7 +2260,7 @@ namespace LiteYaml.Tests.Parser
                 Expect(ParseEventType.MappingEnd),
                 Expect(ParseEventType.DocumentEnd),
                 Expect(ParseEventType.StreamEnd),
-            });
+            ]);
         }
 
         class TestParseResult(
@@ -2297,21 +2287,19 @@ namespace LiteYaml.Tests.Parser
 
         static TestParseResult Expect(ParseEventType type, string? scalarValue)
         {
-            if (scalarValue is null)
-            {
+            if (scalarValue is null) {
                 return new TestParseResult(type, Scalar.Null);
             }
-            var bytes = StringEncoding.Utf8.GetBytes(scalarValue);
+            var bytes = Encoding.UTF8.GetBytes(scalarValue);
             return new TestParseResult(type, new Scalar(bytes), typeof(string));
         }
 
         static TestParseResult Expect<TScalar>(ParseEventType type, TScalar scalarValue)
         {
-            if (scalarValue is null)
-            {
+            if (scalarValue is null) {
                 return new TestParseResult(type, Scalar.Null);
             }
-            var bytes = StringEncoding.Utf8.GetBytes(scalarValue is IFormattable formattable ? formattable.ToString(null, CultureInfo.InvariantCulture) : scalarValue.ToString()!);
+            var bytes = Encoding.UTF8.GetBytes(scalarValue is IFormattable formattable ? formattable.ToString(null, CultureInfo.InvariantCulture) : scalarValue.ToString()!);
             return new TestParseResult(type, new Scalar(bytes), typeof(TScalar));
         }
 
@@ -2319,23 +2307,19 @@ namespace LiteYaml.Tests.Parser
             where TException : Exception
         {
             var ex = Assert.Throws<TException>(
-                code: () =>
-                {
-                    var parser = YamlParser.FromBytes(StringEncoding.Utf8.GetBytes(yaml));
-                    try
-                    {
+                code: () => {
+                    var parser = YamlParser.FromBytes(Encoding.UTF8.GetBytes(yaml));
+                    try {
                         AssertParseResults(ref parser, expects);
                     }
-                    catch (TException e)
-                    {
+                    catch (TException e) {
                         throw new InvalidOperationException("Unexpected exception when parsing.", e);
                     }
 
                     parser.Read();
                 },
                 message: $"Final parser.Read() has not thrown exception, but expected {typeof(TException).Name} with message like '{exceptionLike}'");
-            if (!Regex.IsMatch(ex?.Message ?? "", exceptionLike))
-            {
+            if (!Regex.IsMatch(ex?.Message ?? "", exceptionLike)) {
                 Assert.Fail($"Expected exception message pattern: '{exceptionLike}'\n" +
                             $"But was: '{ex?.Message}'");
             }
@@ -2343,72 +2327,57 @@ namespace LiteYaml.Tests.Parser
 
         static void AssertParseEvents(string yaml, IReadOnlyList<TestParseResult> expects)
         {
-            var parser = YamlParser.FromBytes(StringEncoding.Utf8.GetBytes(yaml));
+            var parser = YamlParser.FromBytes(Encoding.UTF8.GetBytes(yaml));
 
             AssertParseResults(ref parser, expects);
 
-            if (parser.Read())
-            {
+            if (parser.Read()) {
                 Assert.Fail($"Extra event happened: {parser.CurrentEventType} `{parser.GetScalarAsString()}`");
             }
         }
 
         static void AssertParseResults(ref YamlParser parser, IReadOnlyList<TestParseResult> expects)
         {
-            for (var i = 0; i < expects.Count; i++)
-            {
+            for (var i = 0; i < expects.Count; i++) {
                 var expect = expects[i];
-                if (!parser.Read())
-                {
+                if (!parser.Read()) {
                     Assert.Fail($"End of stream, but expected: {expect.Type} {expect.Scalar} at {i}");
                 }
-                if (parser.CurrentEventType != expect.Type)
-                {
+                if (parser.CurrentEventType != expect.Type) {
                     Assert.Fail($"Expected: {expect} at {i}\n" +
                                 $"  But was: {parser.CurrentEventType}");
                 }
-                if (expect.Scalar != null)
-                {
-                    if (expect.ExpectScalarDataType == typeof(int))
-                    {
+                if (expect.Scalar != null) {
+                    if (expect.ExpectScalarDataType == typeof(int)) {
                         expect.Scalar.TryGetInt32(out var expectValue);
-                        if (!parser.TryGetScalarAsInt32(out var actualValue) || expectValue != actualValue)
-                        {
+                        if (!parser.TryGetScalarAsInt32(out var actualValue) || expectValue != actualValue) {
                             Assert.Fail($"Expected {expectValue} ({expect}) at {i}\n" +
                                         $"  But was: {actualValue}");
                         }
                     }
                     else if (expect.ExpectScalarDataType == typeof(float) ||
-                             expect.ExpectScalarDataType == typeof(double))
-                    {
+                             expect.ExpectScalarDataType == typeof(double)) {
                         expect.Scalar.TryGetDouble(out var expectValue);
-                        if (!parser.TryGetScalarAsDouble(out var actualValue) || Math.Abs(expectValue - actualValue) > 0.001)
-                        {
+                        if (!parser.TryGetScalarAsDouble(out var actualValue) || Math.Abs(expectValue - actualValue) > 0.001) {
                             Assert.Fail($"Expected {expectValue} of {expect} at {i}\n" +
                                         $"  But was: {actualValue}");
                         }
                     }
-                    else if (expect.ExpectScalarDataType == typeof(bool))
-                    {
+                    else if (expect.ExpectScalarDataType == typeof(bool)) {
                         expect.Scalar.TryGetBool(out var expectValue);
-                        if (!parser.TryGetScalarAsBool(out var actualValue) || actualValue != expectValue)
-                        {
+                        if (!parser.TryGetScalarAsBool(out var actualValue) || actualValue != expectValue) {
                             Assert.Fail($"Expected {expectValue} of {expect} at {i}\n" +
                                         $"  But was: {actualValue} of {parser.GetScalarAsString()}");
                         }
                     }
-                    else if (expect.Scalar.IsNull())
-                    {
-                        if (!parser.IsNullScalar() && parser.GetScalarAsString() != null)
-                        {
+                    else if (expect.Scalar.IsNull()) {
+                        if (!parser.IsNullScalar() && parser.GetScalarAsString() != null) {
                             Assert.Fail($"Expected null of {expect} at {i}\n" +
                                         $"  But was {parser.CurrentEventType} \"{parser.GetScalarAsString()}\"");
                         }
                     }
-                    else
-                    {
-                        if (parser.GetScalarAsString() != expect.Scalar.ToString())
-                        {
+                    else {
+                        if (parser.GetScalarAsString() != expect.Scalar.ToString()) {
                             Assert.Fail($"Expected {expect} at {i}\n" +
                                         $"  But was: {parser.CurrentEventType}  \"{parser.GetScalarAsString()}\"");
                         }

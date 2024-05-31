@@ -2,6 +2,7 @@ using NUnit.Framework;
 using System.Buffers;
 using LiteYaml.Emitter;
 using LiteYaml.Internal;
+using System.Text;
 
 namespace LiteYaml.Tests.Emitter
 {
@@ -295,7 +296,7 @@ namespace LiteYaml.Tests.Emitter
         public void WritePrimitive_WithTag()
         {
             var emitter = CreateEmitter();
-            emitter.Tag("!foo");
+            emitter.SetTag("!foo");
             emitter.WriteString("hoge");
             Assert.That(ToString(in emitter), Is.EqualTo("!foo hoge"));
         }
@@ -1003,7 +1004,7 @@ namespace LiteYaml.Tests.Emitter
         public void BlockMapping_WithEmptyTag()
         {
             var emitter = CreateEmitter();
-            emitter.Tag("!impl1");
+            emitter.SetTag("!impl1");
             emitter.BeginMapping();
             emitter.EndMapping();
 
@@ -1016,7 +1017,7 @@ namespace LiteYaml.Tests.Emitter
         public void BlockMapping_WithTag()
         {
             var emitter = CreateEmitter();
-            emitter.Tag("!impl1");
+            emitter.SetTag("!impl1");
             emitter.BeginMapping();
             {
                 emitter.WriteString("key1");
@@ -1037,7 +1038,7 @@ namespace LiteYaml.Tests.Emitter
 
             emitter.BeginSequence();
             {
-                emitter.Tag("!impl1");
+                emitter.SetTag("!impl1");
                 emitter.BeginMapping();
                 {
                     emitter.WriteString("key1");
@@ -1049,7 +1050,7 @@ namespace LiteYaml.Tests.Emitter
                 {
                     emitter.BeginSequence();
                     {
-                        emitter.Tag("!impl2");
+                        emitter.SetTag("!impl2");
                         emitter.BeginMapping();
                         {
                             emitter.WriteString("key2");
@@ -1081,7 +1082,7 @@ namespace LiteYaml.Tests.Emitter
             emitter.BeginMapping();
             {
                 emitter.WriteString("key1");
-                emitter.Tag("!impl1");
+                emitter.SetTag("!impl1");
                 emitter.BeginMapping();
                 {
                     emitter.WriteString("key2");
@@ -1094,7 +1095,7 @@ namespace LiteYaml.Tests.Emitter
                     emitter.BeginMapping();
                     {
                         emitter.WriteString("key5");
-                        emitter.Tag("!impl2");
+                        emitter.SetTag("!impl2");
                         emitter.BeginMapping();
                         {
                         }
@@ -1136,7 +1137,7 @@ namespace LiteYaml.Tests.Emitter
         public void FlowSequence_WithTag()
         {
             var emitter = CreateEmitter();
-            emitter.Tag("!foo");
+            emitter.SetTag("!foo");
             emitter.BeginSequence(SequenceStyle.Flow);
             {
                 emitter.WriteInt32(100);
@@ -1157,13 +1158,13 @@ namespace LiteYaml.Tests.Emitter
             emitter.BeginMapping();
             {
                 emitter.WriteString("A1");
-                emitter.Tag("!a1");
+                emitter.SetTag("!a1");
                 emitter.WriteFloat(3.1415f); // !a1 is skipped and written later
 
                 emitter.WriteString("NoTag1");
                 emitter.BeginSequence(SequenceStyle.Flow); // !a1 is written here instead of after A1:
                 {
-                    emitter.Tag("!a2"); // This tag is ignored unless the sequence style is Block
+                    emitter.SetTag("!a2"); // This tag is ignored unless the sequence style is Block
                     emitter.WriteString("A2");
                 }
                 emitter.EndSequence();
@@ -1171,7 +1172,7 @@ namespace LiteYaml.Tests.Emitter
                 emitter.WriteString("NoTag2");
                 emitter.BeginSequence(SequenceStyle.Block); // !a2 is not written here like it was for !a1 (because of the SequenceStyle)
                 {
-                    emitter.Tag("!a3"); // This tag is written, but it breaks the sequence
+                    emitter.SetTag("!a3"); // This tag is written, but it breaks the sequence
                     emitter.WriteString("A3"); // This is written outside of the sequence
                 }
                 emitter.EndSequence();
@@ -1325,7 +1326,7 @@ namespace LiteYaml.Tests.Emitter
         public void FlowMapping_WithTag()
         {
             var emitter = CreateEmitter();
-            emitter.Tag("!foo");
+            emitter.SetTag("!foo");
             emitter.BeginMapping(MappingStyle.Flow);
             {
                 emitter.WriteString("a");
@@ -1432,7 +1433,7 @@ namespace LiteYaml.Tests.Emitter
             ));
         }
 
-        static Utf8YamlEmitter CreateEmitter(YamlEmitOptions? options = null)
+        static Utf8YamlEmitter CreateEmitter(YamlEmitterOptions? options = null)
         {
             var bufferWriter = new ArrayBufferWriter<byte>(256);
             return new Utf8YamlEmitter(bufferWriter, options);
@@ -1440,8 +1441,8 @@ namespace LiteYaml.Tests.Emitter
 
         static string ToString(in Utf8YamlEmitter emitter)
         {
-            var writer = (ArrayBufferWriter<byte>)emitter.GetWriter();
-            return StringEncoding.Utf8.GetString(writer.WrittenSpan);
+            ArrayBufferWriter<byte>? writer = (ArrayBufferWriter<byte>)emitter.GetWriter();
+            return Encoding.UTF8.GetString(writer.WrittenSpan);
         }
     }
 }

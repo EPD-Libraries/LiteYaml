@@ -42,12 +42,12 @@ namespace LiteYaml.Tests
         [Test]
         public void ExplicitScaler()
         {
-            CreateTokenizer(new[]
-            {
+            CreateTokenizer(
+            [
                 "---",
                 "'a scaler'",
                 "---",
-            }, out var reader);
+            ], out var reader);
 
             Assert.That(reader.Read(), Is.True);
             Assert.That(reader.CurrentTokenType, Is.EqualTo(TokenType.StreamStart));
@@ -99,13 +99,13 @@ namespace LiteYaml.Tests
         [Test]
         public void FlowMapping()
         {
-            CreateTokenizer(new[]
-            {
+            CreateTokenizer(
+            [
                 "{",
                 "  a simple key: a value, # Note that the KEY token is produced.",
                 "  ? a complex key: another value,",
                 "}"
-            }, out var reader);
+            ], out var reader);
 
             Assert.That(reader.Read(), Is.True);
             Assert.That(reader.CurrentTokenType, Is.EqualTo(TokenType.StreamStart));
@@ -159,8 +159,8 @@ namespace LiteYaml.Tests
         [Test]
         public void BlockSequences()
         {
-            CreateTokenizer(new[]
-            {
+            CreateTokenizer(
+            [
                 "- item 1",
                 "- item 2",
                 "-",
@@ -169,7 +169,7 @@ namespace LiteYaml.Tests
                 "-",
                 "  key 1: value 1",
                 "  key 2: value 2",
-            }, out var reader);
+            ], out var reader);
 
             Assert.That(reader.Read(), Is.True);
             Assert.That(reader.CurrentTokenType, Is.EqualTo(TokenType.StreamStart));
@@ -258,8 +258,8 @@ namespace LiteYaml.Tests
         [Test]
         public void BlockMappings()
         {
-            CreateTokenizer(new[]
-            {
+            CreateTokenizer(
+            [
                 "a simple key: a value   # The KEY token is produced here.",
                 "? a complex key",
                 ": another value",
@@ -269,7 +269,7 @@ namespace LiteYaml.Tests
                 "a sequence:",
                 "  - item 1",
                 "  - item 2"
-            }, out var reader);
+            ], out var reader);
 
             Assert.That(reader.Read(), Is.True);
             Assert.That(reader.CurrentTokenType, Is.EqualTo(TokenType.StreamStart));
@@ -378,12 +378,12 @@ namespace LiteYaml.Tests
         [Test]
         public void NoBlockSequenceStart()
         {
-            CreateTokenizer(new[]
-            {
+            CreateTokenizer(
+            [
                 "key:",
                 "- item 1",
                 "- item 2",
-            }, out var reader);
+            ], out var reader);
 
             Assert.That(reader.Read(), Is.True);
             Assert.That(reader.CurrentTokenType, Is.EqualTo(TokenType.StreamStart));
@@ -423,15 +423,15 @@ namespace LiteYaml.Tests
         [Test]
         public void CollectionsInSequence()
         {
-            CreateTokenizer(new[]
-            {
+            CreateTokenizer(
+            [
                 "- - item 1",
                 "  - item 2",
                 "- key 1: value 1",
                 "  key 2: value 2",
                 "- ? complex key",
                 "  : complex value",
-            }, out var reader);
+            ], out var reader);
 
             Assert.That(reader.Read(), Is.True);
             Assert.That(reader.CurrentTokenType, Is.EqualTo(TokenType.StreamStart));
@@ -525,15 +525,15 @@ namespace LiteYaml.Tests
         [Test]
         public void CollectionsInMapping()
         {
-            CreateTokenizer(new[]
-            {
+            CreateTokenizer(
+            [
                 "? a sequence",
                 ": - item 1",
                 "  - item 2",
                 "? a mapping",
                 ": key 1: value 1",
                 "  key 2: value 2",
-            }, out var reader);
+            ], out var reader);
 
             Assert.That(reader.Read(), Is.True);
             Assert.That(reader.CurrentTokenType, Is.EqualTo(TokenType.StreamStart));
@@ -618,13 +618,13 @@ namespace LiteYaml.Tests
         [Test]
         public void SpecEx7_3()
         {
-            CreateTokenizer(new[]
-            {
+            CreateTokenizer(
+            [
                 "{",
                 "    ? foo :,",
                 "    : bar,",
                 "}"
-            }, out var reader);
+            ], out var reader);
 
             Assert.That(reader.Read(), Is.True);
             Assert.That(reader.CurrentTokenType, Is.EqualTo(TokenType.StreamStart));
@@ -665,8 +665,8 @@ namespace LiteYaml.Tests
         [Ignore("")]
         public void Mix()
         {
-            CreateTokenizer(new[]
-            {
+            CreateTokenizer(
+            [
                 "- item 1",
                 "- item 2",
                 "-",
@@ -676,7 +676,7 @@ namespace LiteYaml.Tests
                 "  key 1: value 1",
                 "  key 2: value 2",
                 "  key 3: { a: [{x: 100, y: 200}, {x: 300, y: 400}] }"
-            }, out var reader);
+            ], out var reader);
         }
 
         [Test]

@@ -10,24 +10,24 @@ namespace LiteYaml.Parser
         public readonly bool IsNullScalar()
         {
             return CurrentEventType == ParseEventType.Scalar &&
-                   (currentScalar == null ||
-                    currentScalar.IsNull());
+                   (_currentScalar == null ||
+                    _currentScalar.IsNull());
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly string? GetScalarAsString()
         {
-            return currentScalar?.ToString();
+            return _currentScalar?.ToString();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly ReadOnlySpan<byte> GetScalarAsUtf8()
         {
-            if (currentScalar is { } scalar)
+            if (_currentScalar is { } scalar)
             {
                 return scalar.AsUtf8();
             }
-            YamlParserException.Throw(CurrentMark, $"Cannot detect a scalar value as utf8 : {CurrentEventType} {currentScalar}");
+            YamlParserException.Throw(CurrentMark, $"Cannot detect a scalar value as utf8 : {CurrentEventType} {_currentScalar}");
             return default!;
         }
 
@@ -45,96 +45,96 @@ namespace LiteYaml.Parser
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly bool TryGetScalarAsSpan(out ReadOnlySpan<byte> span)
         {
-            if (currentScalar is null)
+            if (_currentScalar is null)
             {
                 span = default;
                 return false;
             }
-            span = currentScalar.AsSpan();
+            span = _currentScalar.AsSpan();
             return true;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly bool GetScalarAsBool()
         {
-            if (currentScalar is { } scalar && scalar.TryGetBool(out var value))
+            if (_currentScalar is { } scalar && scalar.TryGetBool(out var value))
             {
                 return value;
             }
-            YamlParserException.Throw(CurrentMark, $"Cannot detect a scalar value as bool : {CurrentEventType} {currentScalar}");
+            YamlParserException.Throw(CurrentMark, $"Cannot detect a scalar value as bool : {CurrentEventType} {_currentScalar}");
             return default!;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly int GetScalarAsInt32()
         {
-            if (currentScalar is { } scalar && scalar.TryGetInt32(out var value))
+            if (_currentScalar is { } scalar && scalar.TryGetInt32(out var value))
             {
                 return value;
             }
-            YamlParserException.Throw(CurrentMark, $"Cannot detect a scalar value as Int32: {CurrentEventType} {currentScalar}");
+            YamlParserException.Throw(CurrentMark, $"Cannot detect a scalar value as Int32: {CurrentEventType} {_currentScalar}");
             return default!;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly long GetScalarAsInt64()
         {
-            if (currentScalar is { } scalar && scalar.TryGetInt64(out var value))
+            if (_currentScalar is { } scalar && scalar.TryGetInt64(out var value))
             {
                 return value;
             }
-            YamlParserException.Throw(CurrentMark, $"Cannot detect a scalar value as Int64: {CurrentEventType} {currentScalar}");
+            YamlParserException.Throw(CurrentMark, $"Cannot detect a scalar value as Int64: {CurrentEventType} {_currentScalar}");
             return default!;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly uint GetScalarAsUInt32()
         {
-            if (currentScalar is { } scalar && scalar.TryGetUInt32(out var value))
+            if (_currentScalar is { } scalar && scalar.TryGetUInt32(out var value))
             {
                 return value;
             }
-            YamlParserException.Throw(CurrentMark, $"Cannot detect a scalar value as UInt32 : {CurrentEventType} {currentScalar}");
+            YamlParserException.Throw(CurrentMark, $"Cannot detect a scalar value as UInt32 : {CurrentEventType} {_currentScalar}");
             return default!;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly ulong GetScalarAsUInt64()
         {
-            if (currentScalar is { } scalar && scalar.TryGetUInt64(out var value))
+            if (_currentScalar is { } scalar && scalar.TryGetUInt64(out var value))
             {
                 return value;
             }
-            YamlParserException.Throw(CurrentMark, $"Cannot detect a scalar value as UInt64 : {CurrentEventType} ({currentScalar})");
+            YamlParserException.Throw(CurrentMark, $"Cannot detect a scalar value as UInt64 : {CurrentEventType} ({_currentScalar})");
             return default!;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly float GetScalarAsFloat()
         {
-            if (currentScalar is { } scalar && scalar.TryGetFloat(out var value))
+            if (_currentScalar is { } scalar && scalar.TryGetFloat(out var value))
             {
                 return value;
             }
-            YamlParserException.Throw(CurrentMark, $"Cannot detect scalar value as float : {CurrentEventType} {currentScalar}");
+            YamlParserException.Throw(CurrentMark, $"Cannot detect scalar value as float : {CurrentEventType} {_currentScalar}");
             return default!;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly double GetScalarAsDouble()
         {
-            if (currentScalar is { } scalar && scalar.TryGetDouble(out var value))
+            if (_currentScalar is { } scalar && scalar.TryGetDouble(out var value))
             {
                 return value;
             }
-            YamlParserException.Throw(CurrentMark, $"Cannot detect a scalar value as double : {CurrentEventType} {currentScalar}");
+            YamlParserException.Throw(CurrentMark, $"Cannot detect a scalar value as double : {CurrentEventType} {_currentScalar}");
             return default!;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public string? ReadScalarAsString()
         {
-            var result = currentScalar?.ToString();
+            var result = _currentScalar?.ToString();
             ReadWithVerify(ParseEventType.Scalar);
             return result;
         }
@@ -203,7 +203,7 @@ namespace LiteYaml.Parser
                 result = default;
                 return false;
             }
-            result = currentScalar?.ToString();
+            result = _currentScalar?.ToString();
             ReadWithVerify(ParseEventType.Scalar);
             return true;
         }
@@ -288,7 +288,7 @@ namespace LiteYaml.Parser
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly bool TryGetScalarAsString(out string? value)
         {
-            if (currentScalar is { } scalar)
+            if (_currentScalar is { } scalar)
             {
                 value = scalar.IsNull() ? null : scalar.ToString();
                 return true;
@@ -300,7 +300,7 @@ namespace LiteYaml.Parser
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly bool TryGetScalarAsBool(out bool value)
         {
-            if (currentScalar is { } scalar)
+            if (_currentScalar is { } scalar)
                 return scalar.TryGetBool(out value);
             value = default;
             return false;
@@ -309,7 +309,7 @@ namespace LiteYaml.Parser
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly bool TryGetScalarAsInt32(out int value)
         {
-            if (currentScalar is { } scalar)
+            if (_currentScalar is { } scalar)
                 return scalar.TryGetInt32(out value);
             value = default;
             return false;
@@ -318,7 +318,7 @@ namespace LiteYaml.Parser
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly bool TryGetScalarAsUInt32(out uint value)
         {
-            if (currentScalar is { } scalar)
+            if (_currentScalar is { } scalar)
                 return scalar.TryGetUInt32(out value);
             value = default;
             return false;
@@ -327,7 +327,7 @@ namespace LiteYaml.Parser
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly bool TryGetScalarAsInt64(out long value)
         {
-            if (currentScalar is { } scalar)
+            if (_currentScalar is { } scalar)
                 return scalar.TryGetInt64(out value);
             value = default;
             return false;
@@ -336,7 +336,7 @@ namespace LiteYaml.Parser
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly bool TryGetScalarAsUInt64(out ulong value)
         {
-            if (currentScalar is { } scalar)
+            if (_currentScalar is { } scalar)
                 return scalar.TryGetUInt64(out value);
             value = default;
             return false;
@@ -345,7 +345,7 @@ namespace LiteYaml.Parser
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly bool TryGetScalarAsFloat(out float value)
         {
-            if (currentScalar is { } scalar)
+            if (_currentScalar is { } scalar)
                 return scalar.TryGetFloat(out value);
             value = default;
             return false;
@@ -354,7 +354,7 @@ namespace LiteYaml.Parser
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly bool TryGetScalarAsDouble(out double value)
         {
-            if (currentScalar is { } scalar)
+            if (_currentScalar is { } scalar)
                 return scalar.TryGetDouble(out value);
             value = default;
             return false;
@@ -363,9 +363,9 @@ namespace LiteYaml.Parser
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly bool TryGetCurrentTag(out Tag tag)
         {
-            if (currentTag != null)
+            if (_currentTag != null)
             {
-                tag = currentTag;
+                tag = _currentTag;
                 return true;
             }
             tag = default!;
@@ -375,9 +375,9 @@ namespace LiteYaml.Parser
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly bool TryGetCurrentAnchor(out Anchor anchor)
         {
-            if (currentAnchor != null)
+            if (_currentAnchor != null)
             {
-                anchor = currentAnchor;
+                anchor = _currentAnchor;
                 return true;
             }
             anchor = default!;

@@ -1,10 +1,9 @@
-namespace LiteYaml.Internal
+namespace LiteYaml.Internal;
+
+enum LineBreakState
 {
-    enum LineBreakState
-    {
-        None,
-        Lf,
-        CrLf,
-        Cr
-    }
+    None,
+    Lf,
+    CrLf,
+    Cr
 }

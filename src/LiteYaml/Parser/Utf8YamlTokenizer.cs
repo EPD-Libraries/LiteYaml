@@ -127,7 +127,7 @@ namespace LiteYaml.Parser
 
         internal bool TrySkipUnityStrippedSymbol()
         {
-            while (currentCode == YamlCodes.Space)
+            while (currentCode == YamlCodes.SPACE)
             {
                 Advance(1);
             }
@@ -202,61 +202,61 @@ namespace LiteYaml.Parser
 
             switch (currentCode)
             {
-                case YamlCodes.FlowSequenceStart:
+                case YamlCodes.FLOW_SEQUENCE_START:
                     ConsumeFlowCollectionStart(TokenType.FlowSequenceStart);
                     break;
-                case YamlCodes.FlowMapStart:
+                case YamlCodes.FLOW_MAP_START:
                     ConsumeFlowCollectionStart(TokenType.FlowMappingStart);
                     break;
-                case YamlCodes.FlowSequenceEnd:
+                case YamlCodes.FLOW_SEQUENCE_END:
                     ConsumeFlowCollectionEnd(TokenType.FlowSequenceEnd);
                     break;
-                case YamlCodes.FlowMapEnd:
+                case YamlCodes.FLOW_MAP_END:
                     ConsumeFlowCollectionEnd(TokenType.FlowMappingEnd);
                     break;
-                case YamlCodes.Comma:
+                case YamlCodes.COMMA:
                     ConsumeFlowEntryStart();
                     break;
-                case YamlCodes.BlockEntryIndent when !TryPeek(1, out var nextCode) ||
+                case YamlCodes.BLOCK_ENTRY_INDENT when !TryPeek(1, out var nextCode) ||
                                                      YamlCodes.IsEmpty(nextCode):
                     ConsumeBlockEntry();
                     break;
-                case YamlCodes.ExplicitKeyIndent when !TryPeek(1, out var nextCode) ||
+                case YamlCodes.EXPLICIT_KEY_INDENT when !TryPeek(1, out var nextCode) ||
                                                       YamlCodes.IsEmpty(nextCode):
                     ConsumeComplexKeyStart();
                     break;
-                case YamlCodes.MapValueIndent
+                case YamlCodes.MAP_VALUE_INDENT
                     when (TryPeek(1, out var nextCode) && YamlCodes.IsEmpty(nextCode)) ||
                          (flowLevel > 0 && (YamlCodes.IsAnyFlowSymbol(nextCode) || mark.Position == adjacentValueAllowedAt)):
                     ConsumeValueStart();
                     break;
-                case YamlCodes.Alias:
+                case YamlCodes.ALIAS:
                     ConsumeAnchor(true);
                     break;
-                case YamlCodes.Anchor:
+                case YamlCodes.ANCHOR:
                     ConsumeAnchor(false);
                     break;
-                case YamlCodes.Tag:
+                case YamlCodes.TAG:
                     ConsumeTag();
                     break;
-                case YamlCodes.LiteralScalerHeader when flowLevel == 0:
+                case YamlCodes.LITERAL_SCALER_HEADER when flowLevel == 0:
                     ConsumeBlockScaler(true);
                     break;
-                case YamlCodes.FoldedScalerHeader when flowLevel == 0:
+                case YamlCodes.FOLDED_SCALER_HEADER when flowLevel == 0:
                     ConsumeBlockScaler(false);
                     break;
-                case YamlCodes.SingleQuote:
+                case YamlCodes.SINGLE_QUOTE:
                     ConsumeFlowScaler(true);
                     break;
-                case YamlCodes.DoubleQuote:
+                case YamlCodes.DOUBLE_QUOTE:
                     ConsumeFlowScaler(false);
                     break;
                 // Plain Scaler
-                case YamlCodes.BlockEntryIndent when !TryPeek(1, out var nextCode) ||
+                case YamlCodes.BLOCK_ENTRY_INDENT when !TryPeek(1, out var nextCode) ||
                                                      YamlCodes.IsBlank(nextCode):
                     ConsumePlainScalar();
                     break;
-                case YamlCodes.MapValueIndent or YamlCodes.ExplicitKeyIndent
+                case YamlCodes.MAP_VALUE_INDENT or YamlCodes.EXPLICIT_KEY_INDENT
                     when flowLevel == 0 &&
                          (!TryPeek(1, out var nextCode) || YamlCodes.IsBlank(nextCode)):
                     ConsumePlainScalar();
@@ -361,7 +361,7 @@ namespace LiteYaml.Parser
                 Advance(1);
             }
 
-            if (currentCode == YamlCodes.Comment)
+            if (currentCode == YamlCodes.COMMENT)
             {
                 while (!reader.End && !YamlCodes.IsLineBreak(currentCode))
                 {
@@ -765,7 +765,7 @@ namespace LiteYaml.Parser
         void ConsumeTagPrefix(Scalar prefix)
         {
             // Spec: https://yaml.org/spec/1.2.2/#rule-ns-tag-prefix
-            if (currentCode == YamlCodes.Tag)
+            if (currentCode == YamlCodes.TAG)
             {
                 // https://yaml.org/spec/1.2.2/#rule-c-ns-local-tag-prefix
                 prefix.Write(currentCode);
@@ -931,7 +931,7 @@ namespace LiteYaml.Parser
                 Advance(1);
             }
 
-            if (currentCode == YamlCodes.Comment)
+            if (currentCode == YamlCodes.COMMENT)
             {
                 while (!reader.End && !YamlCodes.IsLineBreak(currentCode))
                 {
@@ -970,7 +970,7 @@ namespace LiteYaml.Parser
                 {
                     if (lineBreaksBufferStatic.Length <= 0)
                     {
-                        scalar.Write(YamlCodes.Space);
+                        scalar.Write(YamlCodes.SPACE);
                     }
                 }
                 else
@@ -1020,7 +1020,7 @@ namespace LiteYaml.Parser
             while (true)
             {
                 while ((blockIndent == 0 || mark.Col < blockIndent) &&
-                       currentCode == YamlCodes.Space)
+                       currentCode == YamlCodes.SPACE)
                 {
                     Advance(1);
                 }
@@ -1031,7 +1031,7 @@ namespace LiteYaml.Parser
                 }
 
                 // Check for a tab character messing the indentation.
-                if ((blockIndent == 0 || mark.Col < blockIndent) && currentCode == YamlCodes.Tab)
+                if ((blockIndent == 0 || mark.Col < blockIndent) && currentCode == YamlCodes.TAB)
                 {
                     throw new YamlTokenizerException(in mark,
                         "while scanning a block scalar, found a tab character where an indentation space is expected");
@@ -1045,14 +1045,14 @@ namespace LiteYaml.Parser
                 switch (ConsumeLineBreaks())
                 {
                     case LineBreakState.Lf:
-                        blockLineBreaks.Add(YamlCodes.Lf);
+                        blockLineBreaks.Add(YamlCodes.LF);
                         break;
                     case LineBreakState.CrLf:
-                        blockLineBreaks.Add(YamlCodes.Cr);
-                        blockLineBreaks.Add(YamlCodes.Lf);
+                        blockLineBreaks.Add(YamlCodes.CR);
+                        blockLineBreaks.Add(YamlCodes.LF);
                         break;
                     case LineBreakState.Cr:
-                        blockLineBreaks.Add(YamlCodes.Cr);
+                        blockLineBreaks.Add(YamlCodes.CR);
                         break;
                 }
             }
@@ -1112,14 +1112,14 @@ namespace LiteYaml.Parser
                     switch (currentCode)
                     {
                         // Check for an escaped single quote
-                        case YamlCodes.SingleQuote when TryPeek(1, out var nextCode) &&
-                                                        nextCode == YamlCodes.SingleQuote && singleQuote:
+                        case YamlCodes.SINGLE_QUOTE when TryPeek(1, out var nextCode) &&
+                                                        nextCode == YamlCodes.SINGLE_QUOTE && singleQuote:
                             scalar.Write((byte)'\'');
                             Advance(2);
                             break;
                         // Check for the right quote.
-                        case YamlCodes.SingleQuote when singleQuote:
-                        case YamlCodes.DoubleQuote when !singleQuote:
+                        case YamlCodes.SINGLE_QUOTE when singleQuote:
+                        case YamlCodes.DOUBLE_QUOTE when !singleQuote:
                             goto LOOPEND;
                         // Check for an escaped line break.
                         case (byte)'\\' when !singleQuote &&
@@ -1277,7 +1277,7 @@ namespace LiteYaml.Parser
                     {
                         if (trailingBreak == LineBreakState.None)
                         {
-                            scalar.Write(YamlCodes.Space);
+                            scalar.Write(YamlCodes.SPACE);
                         }
                         else
                         {
@@ -1337,14 +1337,14 @@ namespace LiteYaml.Parser
                         break;
                     }
                 }
-                if (currentCode == YamlCodes.Comment)
+                if (currentCode == YamlCodes.COMMENT)
                 {
                     break;
                 }
 
                 while (!reader.End && !YamlCodes.IsEmpty(currentCode))
                 {
-                    if (currentCode == YamlCodes.MapValueIndent)
+                    if (currentCode == YamlCodes.MAP_VALUE_INDENT)
                     {
                         var hasNext = TryPeek(1, out var nextCode);
                         if (!hasNext ||
@@ -1372,7 +1372,7 @@ namespace LiteYaml.Parser
                             {
                                 if (trailingBreak == LineBreakState.None)
                                 {
-                                    scalar.Write(YamlCodes.Space);
+                                    scalar.Write(YamlCodes.SPACE);
                                 }
                                 else
                                 {
@@ -1406,7 +1406,7 @@ namespace LiteYaml.Parser
                     // whitespaces
                     if (YamlCodes.IsBlank(currentCode))
                     {
-                        if (isLeadingBlanks && mark.Col < currentIndent && currentCode == YamlCodes.Tab)
+                        if (isLeadingBlanks && mark.Col < currentIndent && currentCode == YamlCodes.TAB)
                         {
                             throw new YamlTokenizerException(mark, "While scanning a plain scaler, found a tab");
                         }
@@ -1456,19 +1456,19 @@ namespace LiteYaml.Parser
             {
                 switch (currentCode)
                 {
-                    case YamlCodes.Space:
+                    case YamlCodes.SPACE:
                         Advance(1);
                         break;
-                    case YamlCodes.Tab when flowLevel > 0 || !simpleKeyAllowed:
+                    case YamlCodes.TAB when flowLevel > 0 || !simpleKeyAllowed:
                         Advance(1);
                         break;
-                    case YamlCodes.Lf:
-                    case YamlCodes.Cr:
+                    case YamlCodes.LF:
+                    case YamlCodes.CR:
                         ConsumeLineBreaks();
                         if (flowLevel == 0)
                             simpleKeyAllowed = true;
                         break;
-                    case YamlCodes.Comment:
+                    case YamlCodes.COMMENT:
                         while (!reader.End && !YamlCodes.IsLineBreak(currentCode))
                         {
                             Advance(1);
@@ -1489,7 +1489,7 @@ namespace LiteYaml.Parser
             for (var i = 0; i < offset; i++)
             {
                 mark.Position += 1;
-                if (currentCode == YamlCodes.Lf)
+                if (currentCode == YamlCodes.LF)
                 {
                     mark.Line += 1;
                     mark.Col = 0;
@@ -1510,15 +1510,15 @@ namespace LiteYaml.Parser
 
             switch (currentCode)
             {
-                case YamlCodes.Cr:
-                    if (TryPeek(1, out var secondCode) && secondCode == YamlCodes.Lf)
+                case YamlCodes.CR:
+                    if (TryPeek(1, out var secondCode) && secondCode == YamlCodes.LF)
                     {
                         Advance(2);
                         return LineBreakState.CrLf;
                     }
                     Advance(1);
                     return LineBreakState.Cr;
-                case YamlCodes.Lf:
+                case YamlCodes.LF:
                     Advance(1);
                     return LineBreakState.Lf;
             }

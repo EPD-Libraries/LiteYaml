@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using LiteYaml.Internal;
 using LiteYaml.Parser;
+using System.Text;
 
 namespace LiteYaml.Tests.Parser
 {
@@ -105,7 +106,7 @@ namespace LiteYaml.Tests.Parser
 
         static Scalar FromString(string input)
         {
-            var bytes = StringEncoding.Utf8.GetBytes(input);
+            var bytes = Encoding.UTF8.GetBytes(input);
             return new Scalar(bytes);
         }
     }

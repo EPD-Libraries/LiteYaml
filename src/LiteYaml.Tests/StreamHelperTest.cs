@@ -11,7 +11,7 @@ namespace LiteYaml.Tests
         [Test]
         public async Task ReadAsSequenceAsync_MemoryStream()
         {
-            var memoryStream = new MemoryStream(new[] { (byte)'a', (byte)'b', (byte)'c' });
+            var memoryStream = new MemoryStream([(byte)'a', (byte)'b', (byte)'c']);
             var builder = await StreamHelper.ReadAsSequenceAsync(memoryStream);
             try
             {

@@ -12,13 +12,13 @@ namespace LiteYaml.Tests.Parser
         [Test]
         public void IsNullScalar()
         {
-            var parser = CreateParser(new[]
-            {
+            var parser = CreateParser(
+            [
                 "- null",
                 "- ",
                 "- ~",
                 "- not null",
-            });
+            ]);
 
             parser.SkipAfter(ParseEventType.DocumentStart);
             Assert.That(parser.CurrentEventType, Is.EqualTo(ParseEventType.SequenceStart));
@@ -37,15 +37,15 @@ namespace LiteYaml.Tests.Parser
         [Test]
         public void SkipCurrentNode()
         {
-            var parser = CreateParser(new[]
-            {
+            var parser = CreateParser(
+            [
                 "a: 1",
                 "b: { ba: 2 }",
                 "c: { ca: [100, 200, 300] }",
                 "d: { da: [100, 200, 300], db: 100 }",
                 "e: { ea: [{eaa: 100}, 200, 300], db: {} }",
                 "f: [{ fa: 100, fb: [100, 200, 300] }]",
-            });
+            ]);
 
             parser.SkipAfter(ParseEventType.MappingStart);
             Assert.That(parser.GetScalarAsString(), Is.EqualTo("a"));
@@ -78,12 +78,12 @@ namespace LiteYaml.Tests.Parser
         [Test]
         public void Tag_BlockMapping()
         {
-            var parser = CreateParser(new[]
-            {
+            var parser = CreateParser(
+            [
                 "!tag1",
                 "a: 100",
                 "b: 200",
-            });
+            ]);
 
             parser.SkipAfter(ParseEventType.DocumentStart);
             Assert.That(parser.CurrentEventType, Is.EqualTo(ParseEventType.MappingStart));
@@ -94,8 +94,8 @@ namespace LiteYaml.Tests.Parser
         [Test]
         public void UnityFormat()
         {
-            var parser = CreateParser(new[]
-            {
+            var parser = CreateParser(
+            [
                 "%YAML 1.1",
                 "%TAG !u! tag:unity3d.com,2011:",
                 "--- !u!29 &1",
@@ -130,7 +130,7 @@ namespace LiteYaml.Tests.Parser
                 "  serializedVersion: 2",
                 "  m_Modification:",
                 "    serializedVersion: 2",
-            });
+            ]);
 
             parser.SkipAfter(ParseEventType.StreamStart);
 
@@ -196,13 +196,13 @@ namespace LiteYaml.Tests.Parser
         [Test]
         public void EmptyElementInSequence()
         {
-            var parser = CreateParser(new[]
-            {
+            var parser = CreateParser(
+            [
                 "keywords:",
                 "- ",
                 "- _RIDE_ON",
                 "- _COME_ON",
-            });
+            ]);
 
             parser.SkipAfter(ParseEventType.DocumentStart);
             Assert.That(parser.CurrentEventType, Is.EqualTo(ParseEventType.MappingStart));
