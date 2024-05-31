@@ -101,7 +101,13 @@ class Scalar : ITokenContent
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteUnicodeCodepoint(int codepoint)
     {
-        Span<char> chars = stackalloc char[(char)codepoint];
+#pragma warning disable IDE0079 // Do not suggest removing the warning disable below
+#pragma warning disable IDE0302 // Do not suggest collection expression (behaviour is not the same)
+        Span<char> chars = stackalloc char[] {
+            (char)codepoint
+        };
+#pragma warning restore
+
         var utf8ByteCount = Encoding.UTF8.GetByteCount(chars);
         Span<byte> utf8Bytes = stackalloc byte[utf8ByteCount];
         Encoding.UTF8.GetBytes(chars, utf8Bytes);
@@ -461,4 +467,3 @@ class Scalar : ITokenContent
         _buffer = newBuffer;
     }
 }
-
