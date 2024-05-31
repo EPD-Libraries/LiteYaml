@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>netstandard2.1;net6.0;net8.0</TargetFrameworks>
-        <ImplicitUsings>disable</ImplicitUsings>
+        <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>latest</LangVersion>
 
@@ -12,10 +12,7 @@
 
     <!-- Bundle SourceGenerator -->
     <ItemGroup>
-        <None Include="..\YamlLibrary.SourceGenerator\bin\$(Configuration)\netstandard2.0\YamlLibrary.SourceGenerator.dll"
-              PackagePath="analyzers\dotnet\roslyn4.1\cs"
-              Pack="true"
-              Visible="false" />
+        <None Include="..\YamlLibrary.SourceGenerator\bin\$(Configuration)\netstandard2.0\YamlLibrary.SourceGenerator.dll" PackagePath="analyzers\dotnet\roslyn4.1\cs" Pack="true" Visible="false" />
     </ItemGroup>
 
     <ItemGroup>
@@ -24,7 +21,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\YamlLibrary.Annotations\YamlLibrary.Annotations.csproj" />
-        <ProjectReference Include="..\YamlLibrary.SourceGenerator\YamlLibrary.SourceGenerator.csproj"
-                          ReferenceOutputAssembly="false" />
+        <ProjectReference Include="..\YamlLibrary.SourceGenerator\YamlLibrary.SourceGenerator.csproj" ReferenceOutputAssembly="false" />
     </ItemGroup>
 </Project>

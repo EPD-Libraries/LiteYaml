@@ -42,14 +42,13 @@ namespace YamlLibrary.Internal
             ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
         };
 
-        public static EmitStringInfo Analyze(string value)
+        public static EmitStringInfo Analyze(ReadOnlySpan<char> chars)
         {
-            var chars = value.AsSpan();
             if (chars.Length <= 0) {
                 return new EmitStringInfo(0, true, false);
             }
 
-            var isReservedWord = IsReservedWord(value);
+            var isReservedWord = IsReservedWord(chars);
 
             var first = chars[0];
             var last = chars[^1];
@@ -258,28 +257,12 @@ namespace YamlLibrary.Internal
             return stringBuilder;
         }
 
-        static bool IsReservedWord(string value)
+        static bool IsReservedWord(ReadOnlySpan<char> value)
         {
-            var b = new StringBuilder();
-            b.Append('\n');
-            switch (value.Length) {
-                case 1:
-                    if (value == "~") {
-                        return true;
-                    }
-                    break;
-                case 4:
-                    if (value is "null" or "Null" or "NULL" or "true" or "True" or "TRUE") {
-                        return true;
-                    }
-                    break;
-                case 5:
-                    if (value is "false" or "False" or "FALSE") {
-                        return true;
-                    }
-                    break;
-            }
-            return false;
+            return value is "~" or
+                "null" or "Null" or "NULL" or
+                "true" or "True" or "TRUE" or
+                "false" or "False" or "FALSE";
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
