@@ -1,11 +1,9 @@
-#nullable enable
-using System.Collections.Generic;
 using YamlLibrary.Emitter;
 using YamlLibrary.Parser;
 
 namespace YamlLibrary.Serialization
 {
-    public class InterfaceDictionaryFormatter<TKey, TValue> : IYamlFormatter<IDictionary<TKey, TValue>?>
+    public class InterfaceDictionaryFormatter<TKey, TValue> : IYamlFormatter<IDictionary<TKey, TValue>?> where TKey : notnull
     {
         public void Serialize(ref Utf8YamlEmitter emitter, IDictionary<TKey, TValue>? value, YamlSerializationContext context)
         {
