@@ -1,10 +1,11 @@
+using LiteYaml.Internal;
+using LiteYaml.Parser;
 using NUnit.Framework;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Text;
-using LiteYaml.Parser;
 
-namespace LiteYaml.Tests
+namespace LiteYaml.Tests.Parser
 {
     [TestFixture]
     class Utf8YamlTokenizerTest
@@ -12,7 +13,7 @@ namespace LiteYaml.Tests
         [Test]
         public void Empty()
         {
-            CreateTokenizer("", out var tokenizer);
+            CreateTokenizer("", out Utf8YamlTokenizer tokenizer);
             Assert.That(tokenizer.Read(), Is.True);
             Assert.That(tokenizer.CurrentTokenType, Is.EqualTo(TokenType.StreamStart));
             Assert.That(tokenizer.Read(), Is.True);
@@ -26,7 +27,7 @@ namespace LiteYaml.Tests
         [TestCase(":,b")]
         public void PlainScaler(string scalerValue)
         {
-            CreateTokenizer(scalerValue, out var reader);
+            CreateTokenizer(scalerValue, out Utf8YamlTokenizer reader);
             Assert.That(reader.Read(), Is.True);
             Assert.That(reader.CurrentTokenType, Is.EqualTo(TokenType.StreamStart));
 
@@ -47,7 +48,7 @@ namespace LiteYaml.Tests
                 "---",
                 "'a scaler'",
                 "---",
-            ], out var reader);
+            ], out Utf8YamlTokenizer reader);
 
             Assert.That(reader.Read(), Is.True);
             Assert.That(reader.CurrentTokenType, Is.EqualTo(TokenType.StreamStart));
@@ -62,7 +63,7 @@ namespace LiteYaml.Tests
         [Test]
         public void FlowSequence()
         {
-            CreateTokenizer("[item 1, item 2, item 3]", out var tokenizer);
+            CreateTokenizer("[item 1, item 2, item 3]", out Utf8YamlTokenizer tokenizer);
 
             Assert.That(tokenizer.Read(), Is.True);
             Assert.That(tokenizer.CurrentTokenType, Is.EqualTo(TokenType.StreamStart));
@@ -105,7 +106,7 @@ namespace LiteYaml.Tests
                 "  a simple key: a value, # Note that the KEY token is produced.",
                 "  ? a complex key: another value,",
                 "}"
-            ], out var reader);
+            ], out Utf8YamlTokenizer reader);
 
             Assert.That(reader.Read(), Is.True);
             Assert.That(reader.CurrentTokenType, Is.EqualTo(TokenType.StreamStart));
@@ -169,7 +170,7 @@ namespace LiteYaml.Tests
                 "-",
                 "  key 1: value 1",
                 "  key 2: value 2",
-            ], out var reader);
+            ], out Utf8YamlTokenizer reader);
 
             Assert.That(reader.Read(), Is.True);
             Assert.That(reader.CurrentTokenType, Is.EqualTo(TokenType.StreamStart));
@@ -269,7 +270,7 @@ namespace LiteYaml.Tests
                 "a sequence:",
                 "  - item 1",
                 "  - item 2"
-            ], out var reader);
+            ], out Utf8YamlTokenizer reader);
 
             Assert.That(reader.Read(), Is.True);
             Assert.That(reader.CurrentTokenType, Is.EqualTo(TokenType.StreamStart));
@@ -383,7 +384,7 @@ namespace LiteYaml.Tests
                 "key:",
                 "- item 1",
                 "- item 2",
-            ], out var reader);
+            ], out Utf8YamlTokenizer reader);
 
             Assert.That(reader.Read(), Is.True);
             Assert.That(reader.CurrentTokenType, Is.EqualTo(TokenType.StreamStart));
@@ -431,7 +432,7 @@ namespace LiteYaml.Tests
                 "  key 2: value 2",
                 "- ? complex key",
                 "  : complex value",
-            ], out var reader);
+            ], out Utf8YamlTokenizer reader);
 
             Assert.That(reader.Read(), Is.True);
             Assert.That(reader.CurrentTokenType, Is.EqualTo(TokenType.StreamStart));
@@ -533,7 +534,7 @@ namespace LiteYaml.Tests
                 "? a mapping",
                 ": key 1: value 1",
                 "  key 2: value 2",
-            ], out var reader);
+            ], out Utf8YamlTokenizer reader);
 
             Assert.That(reader.Read(), Is.True);
             Assert.That(reader.CurrentTokenType, Is.EqualTo(TokenType.StreamStart));
@@ -624,7 +625,7 @@ namespace LiteYaml.Tests
                 "    ? foo :,",
                 "    : bar,",
                 "}"
-            ], out var reader);
+            ], out Utf8YamlTokenizer reader);
 
             Assert.That(reader.Read(), Is.True);
             Assert.That(reader.CurrentTokenType, Is.EqualTo(TokenType.StreamStart));
@@ -676,7 +677,7 @@ namespace LiteYaml.Tests
                 "  key 1: value 1",
                 "  key 2: value 2",
                 "  key 3: { a: [{x: 100, y: 200}, {x: 300, y: 400}] }"
-            ], out var reader);
+            ], out Utf8YamlTokenizer reader);
         }
 
         [Test]
@@ -684,7 +685,7 @@ namespace LiteYaml.Tests
         [TestCase('?')]
         public void PlainScaler_StartingWithIndicatorInFlow(char literal)
         {
-            CreateTokenizer($"{{a: {literal}b}}", out var reader);
+            CreateTokenizer($"{{a: {literal}b}}", out Utf8YamlTokenizer reader);
 
             Assert.That(reader.Read(), Is.True);
             Assert.That(reader.CurrentTokenType, Is.EqualTo(TokenType.StreamStart));
@@ -726,7 +727,7 @@ namespace LiteYaml.Tests
         [TestCase("[!!seq[], x]", "!!seq")]
         public void Tag(string input, string value)
         {
-            CreateTokenizer(input, out var reader);
+            CreateTokenizer(input, out Utf8YamlTokenizer reader);
 
             while (reader.Read() && reader.CurrentTokenType != TokenType.Tag) { }
 
@@ -742,7 +743,7 @@ namespace LiteYaml.Tests
         [TestCase("null0", ExpectedResult = false)]
         public bool IsNull(string input)
         {
-            CreateTokenizer(input, out var tokenizer);
+            CreateTokenizer(input, out Utf8YamlTokenizer tokenizer);
             tokenizer.Read();
             tokenizer.Read();
             return Scalar(ref tokenizer).IsNull();
@@ -750,13 +751,13 @@ namespace LiteYaml.Tests
 
         static void CreateTokenizer(IEnumerable<string> lines, out Utf8YamlTokenizer tokenizer)
         {
-            var yaml = string.Join('\n', lines);
+            string yaml = string.Join('\n', lines);
             CreateTokenizer(yaml, out tokenizer);
         }
 
         static void CreateTokenizer(string yaml, out Utf8YamlTokenizer x)
         {
-            var sequence = new ReadOnlySequence<byte>(Encoding.UTF8.GetBytes(yaml));
+            ReadOnlySequence<byte> sequence = new(Encoding.UTF8.GetBytes(yaml));
             x = new Utf8YamlTokenizer(sequence);
         }
 

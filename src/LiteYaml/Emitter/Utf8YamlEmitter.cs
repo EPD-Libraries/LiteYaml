@@ -1,8 +1,8 @@
+using LiteYaml.Internal;
 using System.Buffers;
 using System.Buffers.Text;
 using System.Runtime.CompilerServices;
 using System.Text;
-using LiteYaml.Internal;
 
 namespace LiteYaml.Emitter;
 

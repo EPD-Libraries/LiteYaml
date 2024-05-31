@@ -6,7 +6,10 @@ namespace LiteYaml.Parser
         public int Line = line;
         public int Col = col;
 
-        public override string ToString() => $"Line: {Line}, Col: {Col}, Idx: {Position}";
+        public override string ToString()
+        {
+            return $"Line: {Line}, Col: {Col}, Idx: {Position}";
+        }
     }
 }
 

@@ -6,7 +6,10 @@ namespace LiteYaml.Parser
         public readonly TokenType Type = type;
         public readonly ITokenContent? Content = content;
 
-        public override string ToString() => $"{Type} \"{Content}\"";
+        public override string ToString()
+        {
+            return $"{Type} \"{Content}\"";
+        }
     }
 }
 

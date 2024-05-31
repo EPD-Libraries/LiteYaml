@@ -1,11 +1,11 @@
-using LiteYaml.Internal;
+using LiteYaml.Parser;
 using System.Buffers;
 using System.Buffers.Text;
 using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace LiteYaml.Parser;
+namespace LiteYaml.Internal;
 
 class ScalarPool
 {
@@ -15,7 +15,7 @@ class ScalarPool
 
     public Scalar Rent()
     {
-        if (_queue.TryDequeue(out var value)) {
+        if (_queue.TryDequeue(out Scalar? value)) {
             return value;
         }
 
@@ -51,13 +51,22 @@ class Scalar : ITokenContent
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Span<byte> AsSpan() => _buffer.AsSpan(0, Length);
+    public Span<byte> AsSpan()
+    {
+        return _buffer.AsSpan(0, Length);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Span<byte> AsSpan(int start, int length) => _buffer.AsSpan(start, length);
+    public Span<byte> AsSpan(int start, int length)
+    {
+        return _buffer.AsSpan(start, length);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ReadOnlySpan<byte> AsUtf8() => _buffer.AsSpan(0, Length);
+    public ReadOnlySpan<byte> AsUtf8()
+    {
+        return _buffer.AsSpan(0, Length);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Write(byte code)
@@ -108,7 +117,7 @@ class Scalar : ITokenContent
         };
 #pragma warning restore
 
-        var utf8ByteCount = Encoding.UTF8.GetByteCount(chars);
+        int utf8ByteCount = Encoding.UTF8.GetByteCount(chars);
         Span<byte> utf8Bytes = stackalloc byte[utf8ByteCount];
         Encoding.UTF8.GetBytes(chars, utf8Bytes);
         Write(utf8Bytes);
@@ -133,7 +142,7 @@ class Scalar : ITokenContent
     /// </remarks>
     public bool IsNull()
     {
-        var span = AsSpan();
+        Span<byte> span = AsSpan();
         switch (span.Length) {
             case 0:
             case 1 when span[0] == YamlCodes.NullAlias:
@@ -153,7 +162,7 @@ class Scalar : ITokenContent
     /// </remarks>
     public bool TryGetBool(out bool value)
     {
-        var span = AsSpan();
+        Span<byte> span = AsSpan();
         switch (span.Length) {
             case 4 when span.SequenceEqual(YamlCodes.True0) ||
                         span.SequenceEqual(YamlCodes.True1) ||
@@ -173,14 +182,14 @@ class Scalar : ITokenContent
 
     public bool TryGetInt32(out int value)
     {
-        var span = AsSpan();
+        Span<byte> span = AsSpan();
 
-        if (Utf8Parser.TryParse(span, out value, out var bytesConsumed) &&
+        if (Utf8Parser.TryParse(span, out value, out int bytesConsumed) &&
             bytesConsumed == span.Length) {
             return true;
         }
 
-        if (TryDetectHex(span, out var hexNumber)) {
+        if (TryDetectHex(span, out ReadOnlySpan<byte> hexNumber)) {
             return Utf8Parser.TryParse(hexNumber, out value, out bytesConsumed, 'x') &&
                    bytesConsumed == hexNumber.Length;
         }
@@ -191,7 +200,7 @@ class Scalar : ITokenContent
             value *= -1;
             return true;
         }
-        if (TryParseOctal(span, out var octalUlong) && octalUlong <= int.MaxValue) {
+        if (TryParseOctal(span, out ulong octalUlong) && octalUlong <= int.MaxValue) {
             value = (int)octalUlong;
             return true;
         }
@@ -200,25 +209,25 @@ class Scalar : ITokenContent
 
     public bool TryGetInt64(out long value)
     {
-        var span = AsSpan();
-        if (Utf8Parser.TryParse(span, out value, out var bytesConsumed) &&
+        Span<byte> span = AsSpan();
+        if (Utf8Parser.TryParse(span, out value, out int bytesConsumed) &&
             bytesConsumed == span.Length) {
             return true;
         }
 
         if (span.Length > YamlCodes.HexPrefix.Length && span.StartsWith(YamlCodes.HexPrefix)) {
-            var slice = span[YamlCodes.HexPrefix.Length..];
-            return Utf8Parser.TryParse(slice, out value, out var bytesConsumedHex, 'x') &&
+            Span<byte> slice = span[YamlCodes.HexPrefix.Length..];
+            return Utf8Parser.TryParse(slice, out value, out int bytesConsumedHex, 'x') &&
                    bytesConsumedHex == slice.Length;
         }
         if (span.Length > YamlCodes.HexPrefixNegative.Length && span.StartsWith(YamlCodes.HexPrefixNegative)) {
-            var slice = span[YamlCodes.HexPrefixNegative.Length..];
-            if (Utf8Parser.TryParse(slice, out value, out var bytesConsumedHex, 'x') && bytesConsumedHex == slice.Length) {
+            Span<byte> slice = span[YamlCodes.HexPrefixNegative.Length..];
+            if (Utf8Parser.TryParse(slice, out value, out int bytesConsumedHex, 'x') && bytesConsumedHex == slice.Length) {
                 value = -value;
                 return true;
             }
         }
-        if (TryParseOctal(span, out var octalUlong) && octalUlong <= long.MaxValue) {
+        if (TryParseOctal(span, out ulong octalUlong) && octalUlong <= long.MaxValue) {
             value = (long)octalUlong;
             return true;
         }
@@ -227,18 +236,18 @@ class Scalar : ITokenContent
 
     public bool TryGetUInt32(out uint value)
     {
-        var span = AsSpan();
+        Span<byte> span = AsSpan();
 
-        if (Utf8Parser.TryParse(span, out value, out var bytesConsumed) &&
+        if (Utf8Parser.TryParse(span, out value, out int bytesConsumed) &&
             bytesConsumed == span.Length) {
             return true;
         }
 
-        if (TryDetectHex(span, out var hexNumber)) {
+        if (TryDetectHex(span, out ReadOnlySpan<byte> hexNumber)) {
             return Utf8Parser.TryParse(hexNumber, out value, out bytesConsumed, 'x') &&
                    bytesConsumed == hexNumber.Length;
         }
-        if (TryParseOctal(span, out var octalUlong) && octalUlong <= uint.MaxValue) {
+        if (TryParseOctal(span, out ulong octalUlong) && octalUlong <= uint.MaxValue) {
             value = (uint)octalUlong;
             return true;
         }
@@ -247,14 +256,14 @@ class Scalar : ITokenContent
 
     public bool TryGetUInt64(out ulong value)
     {
-        var span = AsSpan();
+        Span<byte> span = AsSpan();
 
-        if (Utf8Parser.TryParse(span, out value, out var bytesConsumed) &&
+        if (Utf8Parser.TryParse(span, out value, out int bytesConsumed) &&
             bytesConsumed == span.Length) {
             return true;
         }
 
-        if (TryDetectHex(span, out var hexNumber)) {
+        if (TryDetectHex(span, out ReadOnlySpan<byte> hexNumber)) {
             return Utf8Parser.TryParse(hexNumber, out value, out bytesConsumed, 'x') &&
                    bytesConsumed == hexNumber.Length;
         }
@@ -266,8 +275,8 @@ class Scalar : ITokenContent
 
     public bool TryGetFloat(out float value)
     {
-        var span = AsSpan();
-        if (Utf8Parser.TryParse(span, out value, out var bytesConsumed) &&
+        Span<byte> span = AsSpan();
+        if (Utf8Parser.TryParse(span, out value, out int bytesConsumed) &&
             bytesConsumed == span.Length) {
             return true;
         }
@@ -308,8 +317,8 @@ class Scalar : ITokenContent
 
     public bool TryGetDouble(out double value)
     {
-        var span = AsSpan();
-        if (Utf8Parser.TryParse(span, out value, out var bytesConsumed) &&
+        Span<byte> span = AsSpan();
+        if (Utf8Parser.TryParse(span, out value, out int bytesConsumed) &&
             bytesConsumed == span.Length) {
             return true;
         }
@@ -366,7 +375,7 @@ class Scalar : ITokenContent
         if (sizeHint <= _buffer.Length) {
             return;
         }
-        var newCapacity = _buffer.Length * GROW_FACTOR / 100;
+        int newCapacity = _buffer.Length * GROW_FACTOR / 100;
         while (newCapacity < sizeHint) {
             newCapacity = newCapacity * GROW_FACTOR / 100;
         }
@@ -406,7 +415,7 @@ class Scalar : ITokenContent
             return false;
         }
         // we have more characters after the prefix
-        var toSkip = YamlCodes.OctalPrefix.Length;
+        int toSkip = YamlCodes.OctalPrefix.Length;
         while (toSkip < span.Length && span[toSkip] == (byte)'0') {
             toSkip++;
         }
@@ -416,10 +425,10 @@ class Scalar : ITokenContent
             value = 0;
             return toSkip == span.Length;
         }
-        var octalSpan = span[toSkip..];
+        ReadOnlySpan<byte> octalSpan = span[toSkip..];
         // read first digit here, so all next digits run in a loop with bit shift
-        var nextChar = octalSpan[0];
-        var nextDigit = nextChar - (byte)'0';
+        byte nextChar = octalSpan[0];
+        int nextDigit = nextChar - (byte)'0';
         if (nextDigit is < 0 or > 7 ||
             nextDigit > 1 && octalSpan.Length == 22 ||
             octalSpan.Length > 22) {
@@ -448,7 +457,7 @@ class Scalar : ITokenContent
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void Grow()
     {
-        var newCapacity = _buffer.Length * GROW_FACTOR / 100;
+        int newCapacity = _buffer.Length * GROW_FACTOR / 100;
         if (newCapacity < _buffer.Length + MINIMUM_GROW) {
             newCapacity = _buffer.Length + MINIMUM_GROW;
         }
@@ -458,10 +467,11 @@ class Scalar : ITokenContent
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void SetCapacity(int newCapacity)
     {
-        if (_buffer.Length >= newCapacity)
+        if (_buffer.Length >= newCapacity) {
             return;
+        }
 
-        var newBuffer = ArrayPool<byte>.Shared.Rent(newCapacity);
+        byte[] newBuffer = ArrayPool<byte>.Shared.Rent(newCapacity);
         Array.Copy(_buffer, 0, newBuffer, 0, Length);
         ArrayPool<byte>.Shared.Return(_buffer);
         _buffer = newBuffer;

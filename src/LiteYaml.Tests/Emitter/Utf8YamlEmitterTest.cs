@@ -1,7 +1,6 @@
+using LiteYaml.Emitter;
 using NUnit.Framework;
 using System.Buffers;
-using LiteYaml.Emitter;
-using LiteYaml.Internal;
 using System.Text;
 
 namespace LiteYaml.Tests.Emitter
@@ -12,7 +11,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void WriteNull()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.WriteNull();
             Assert.That(ToString(in emitter), Is.EqualTo("null"));
         }
@@ -22,7 +21,7 @@ namespace LiteYaml.Tests.Emitter
         [TestCase(false, ExpectedResult = "false")]
         public string WriteBool(bool value)
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.WriteBool(value);
             return ToString(in emitter);
         }
@@ -35,7 +34,7 @@ namespace LiteYaml.Tests.Emitter
         [TestCase(int.MinValue, ExpectedResult = "-2147483648")]
         public string WriteInt32(int value)
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.WriteInt32(value);
             return ToString(in emitter);
         }
@@ -48,7 +47,7 @@ namespace LiteYaml.Tests.Emitter
         [TestCase(long.MinValue, ExpectedResult = "-9223372036854775808")]
         public string WriteInt64(long value)
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.WriteInt64(value);
             return ToString(in emitter);
         }
@@ -59,7 +58,7 @@ namespace LiteYaml.Tests.Emitter
         [TestCase(uint.MaxValue, ExpectedResult = "4294967295")]
         public string WriteUInt32(uint value)
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.WriteUInt32(value);
             return ToString(in emitter);
         }
@@ -70,7 +69,7 @@ namespace LiteYaml.Tests.Emitter
         [TestCase(ulong.MaxValue, ExpectedResult = "18446744073709551615")]
         public string WriteUInt64(ulong value)
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.WriteUInt64(value);
             return ToString(in emitter);
         }
@@ -81,7 +80,7 @@ namespace LiteYaml.Tests.Emitter
         [TestCase(-123.4567f, ExpectedResult = "-123.4567")]
         public string WriteFloat(float value)
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.WriteFloat(value);
             return ToString(in emitter);
         }
@@ -92,7 +91,7 @@ namespace LiteYaml.Tests.Emitter
         [TestCase(-123.456789123, ExpectedResult = "-123.456789123")]
         public string WriteDouble(double value)
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.WriteDouble(value);
             return ToString(in emitter);
         }
@@ -100,7 +99,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void WriteString_PlainScalar()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.WriteString("aiueo", ScalarStyle.Plain);
             Assert.That(ToString(in emitter), Is.EqualTo("aiueo"));
         }
@@ -117,7 +116,7 @@ namespace LiteYaml.Tests.Emitter
         [TestCase("\x1F", ExpectedResult = "\"\\u001f\"")]
         public string WriteString_DoubleQuotedScalar(string value)
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.WriteString(value, ScalarStyle.DoubleQuoted);
             return ToString(in emitter);
         }
@@ -133,7 +132,7 @@ namespace LiteYaml.Tests.Emitter
         [TestCase("\x1F", ExpectedResult = "'\\u001f'")]
         public string WriteString_SingleQuotedScalar(string value)
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.WriteString(value, ScalarStyle.SingleQuoted);
             return ToString(in emitter);
         }
@@ -141,7 +140,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void WriteString_LiteralScalar()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
 
             emitter.WriteString(
                 "Mark McGwire's\nyear was crippled\nby a knee injury.\n",
@@ -158,7 +157,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void WriteString_LiteralScalar_NoNewLineAtEnd()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
 
             emitter.WriteString(
                 "Mark McGwire's\nyear was crippled\nby a knee injury.",
@@ -175,7 +174,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void WriteString_LiteralScalar_AllNewlinesFromEnd()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
 
             emitter.WriteString(
                 "Mark McGwire's\nyear was crippled\nby a knee injury.\n\n\n",
@@ -194,7 +193,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void WriteString_LiteralScalarInSequence()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.BeginSequence();
             emitter.WriteString(
                 "Mark McGwire's\nyear was crippled\nby a knee injury.\n",
@@ -212,7 +211,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void WriteString_LiteralScalarInMapping()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.BeginMapping();
             emitter.WriteString("aaa");
             emitter.WriteString(
@@ -231,7 +230,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void WriteString_LiteralScalarNested()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.BeginSequence();
             {
                 emitter.BeginMapping();
@@ -245,7 +244,7 @@ namespace LiteYaml.Tests.Emitter
             }
             emitter.EndSequence();
 
-            var result = ToString(in emitter);
+            string result = ToString(in emitter);
             Assert.That(result, Is.EqualTo(
                 "- aaa: |\n" +
                 "    Mark McGwire's\n" +
@@ -257,7 +256,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void WriteString_AutoDetectPlainScalar()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.WriteString("aiueo kakikukeko");
             Assert.That(ToString(in emitter), Is.EqualTo("aiueo kakikukeko"));
         }
@@ -278,7 +277,7 @@ namespace LiteYaml.Tests.Emitter
         [TestCase("http://example.com#bbb", ExpectedResult = "\"http://example.com#bbb\"")]
         public string WriteString_AutoDoubleQuoted(string value)
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.WriteString(value);
             return ToString(in emitter);
         }
@@ -287,7 +286,7 @@ namespace LiteYaml.Tests.Emitter
         [TestCase("aaa\nbbb\n", ExpectedResult = "|\n  aaa\n  bbb\n")]
         public string WriteString_AutoMultiLines(string value)
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.WriteString(value);
             return ToString(in emitter);
         }
@@ -295,7 +294,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void WritePrimitive_WithTag()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.SetTag("!foo");
             emitter.WriteString("hoge");
             Assert.That(ToString(in emitter), Is.EqualTo("!foo hoge"));
@@ -304,7 +303,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void BlockSequence()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.BeginSequence();
             emitter.WriteInt32(100);
             emitter.WriteInt32(200);
@@ -321,7 +320,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void BlockSequence_Empty()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.BeginSequence();
             emitter.EndSequence();
 
@@ -333,7 +332,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void BlockSequence_Nested1()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.BeginSequence();
             {
                 emitter.WriteInt32(100);
@@ -359,7 +358,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void BlockSequence_Nested2()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.BeginMapping(MappingStyle.Block);
             {
                 emitter.WriteString("matrix");
@@ -393,7 +392,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void BlockSequence_Nested3()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.BeginMapping(MappingStyle.Block);
             {
                 emitter.WriteString("key1");
@@ -433,7 +432,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void BlockSequence_Nested4()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.BeginSequence(SequenceStyle.Block);
             {
                 emitter.BeginSequence(SequenceStyle.Block);
@@ -466,7 +465,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void BlockSequence_NestedDeeply()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.BeginSequence();
             {
                 emitter.WriteInt32(100);
@@ -523,7 +522,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void BlockSequence_NestedFirstElement()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.BeginSequence();
             {
                 emitter.BeginSequence();
@@ -599,7 +598,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void BlockSequence_InBlockMapping()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.BeginMapping();
             {
                 emitter.WriteString("aaa");
@@ -628,7 +627,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void BlockSequence_InBlockMappingMultiple()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.BeginMapping();
             {
                 emitter.WriteString("aaa");
@@ -668,7 +667,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void BlockSequence_NestedEmptySequences()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.BeginSequence();
             {
                 emitter.BeginSequence();
@@ -688,9 +687,8 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void BlockSequence_InvalidStartInKey()
         {
-            Assert.Throws<YamlEmitterException>(() =>
-            {
-                var emitter = CreateEmitter();
+            Assert.Throws<YamlEmitterException>(() => {
+                Utf8YamlEmitter emitter = CreateEmitter();
                 emitter.BeginMapping();
                 emitter.BeginSequence();
             });
@@ -699,7 +697,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void BlockMapping()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.BeginMapping();
             {
                 emitter.WriteInt32(1);
@@ -718,7 +716,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void BlockMapping_Empty()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.BeginMapping();
             emitter.EndMapping();
 
@@ -728,7 +726,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void BlockMapping_Nested1()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.BeginMapping();
             {
                 emitter.WriteInt32(1);
@@ -759,7 +757,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void BlockMapping_NestedDeeply()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.BeginMapping();
             {
                 emitter.WriteString("key1");
@@ -845,7 +843,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void BlockMapping_NestedEmptyMappings()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.BeginMapping();
             {
                 emitter.WriteString("a");
@@ -867,7 +865,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void BlockMapping_NestedEmptySequences()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.BeginMapping();
             {
                 emitter.WriteString("a");
@@ -889,7 +887,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void BlockMapping_NestedFirstElements()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.BeginMapping();
             {
                 emitter.WriteString("key1");
@@ -992,9 +990,8 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void BlockMapping_InvalidStartInKey()
         {
-            Assert.Throws<YamlEmitterException>(() =>
-            {
-                var emitter = CreateEmitter();
+            Assert.Throws<YamlEmitterException>(() => {
+                Utf8YamlEmitter emitter = CreateEmitter();
                 emitter.BeginMapping();
                 emitter.BeginMapping();
             });
@@ -1003,7 +1000,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void BlockMapping_WithEmptyTag()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.SetTag("!impl1");
             emitter.BeginMapping();
             emitter.EndMapping();
@@ -1016,7 +1013,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void BlockMapping_WithTag()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.SetTag("!impl1");
             emitter.BeginMapping();
             {
@@ -1034,7 +1031,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void BlockMapping_WithTagInSequence()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
 
             emitter.BeginSequence();
             {
@@ -1077,7 +1074,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void BlockMapping_WithTagNested()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
 
             emitter.BeginMapping();
             {
@@ -1119,7 +1116,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void FlowSequence()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.BeginSequence(SequenceStyle.Flow);
             {
                 emitter.WriteInt32(100);
@@ -1136,7 +1133,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void FlowSequence_WithTag()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.SetTag("!foo");
             emitter.BeginSequence(SequenceStyle.Flow);
             {
@@ -1154,7 +1151,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void FlowSequence_Nested_WithTag()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.BeginMapping();
             {
                 emitter.WriteString("A1");
@@ -1190,7 +1187,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void FlowSequence_Nested1()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.BeginSequence(SequenceStyle.Flow);
             {
                 emitter.WriteInt32(100);
@@ -1212,7 +1209,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void FlowSequence_Nested2()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.BeginMapping(MappingStyle.Block);
             {
                 emitter.WriteString("a");
@@ -1245,7 +1242,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void FlowMapping()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.BeginMapping(MappingStyle.Flow);
             {
                 emitter.WriteString("a");
@@ -1263,7 +1260,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void FlowMapping_Empty()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.BeginMapping(MappingStyle.Flow);
             emitter.EndMapping();
 
@@ -1273,7 +1270,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void FlowMapping_Nested1()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.BeginMapping(MappingStyle.Flow);
             {
                 emitter.WriteString("a");
@@ -1297,7 +1294,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void FlowMapping_Nested2()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.BeginSequence(SequenceStyle.Block);
             {
                 emitter.BeginMapping(MappingStyle.Flow);
@@ -1325,7 +1322,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void FlowMapping_WithTag()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.SetTag("!foo");
             emitter.BeginMapping(MappingStyle.Flow);
             {
@@ -1344,7 +1341,7 @@ namespace LiteYaml.Tests.Emitter
         [Test]
         public void ComplexStructure()
         {
-            var emitter = CreateEmitter();
+            Utf8YamlEmitter emitter = CreateEmitter();
             emitter.BeginSequence();
             {
                 emitter.BeginSequence(SequenceStyle.Flow);
@@ -1435,7 +1432,7 @@ namespace LiteYaml.Tests.Emitter
 
         static Utf8YamlEmitter CreateEmitter(YamlEmitterOptions? options = null)
         {
-            var bufferWriter = new ArrayBufferWriter<byte>(256);
+            ArrayBufferWriter<byte> bufferWriter = new(256);
             return new Utf8YamlEmitter(bufferWriter, options);
         }
 

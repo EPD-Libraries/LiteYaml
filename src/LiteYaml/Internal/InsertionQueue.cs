@@ -38,8 +38,10 @@ internal class InsertionQueue<T>
 
     public T Peek()
     {
-        if (Count == 0)
+        if (Count == 0) {
             ThrowForEmptyQueue();
+        }
+
         return _array[_headIndex];
     }
 
@@ -58,10 +60,11 @@ internal class InsertionQueue<T>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public T Dequeue()
     {
-        if (Count == 0)
+        if (Count == 0) {
             ThrowForEmptyQueue();
+        }
 
-        var removed = _array[_headIndex];
+        T? removed = _array[_headIndex];
         MoveNext(ref _headIndex);
         Count--;
         return removed;
@@ -76,9 +79,9 @@ internal class InsertionQueue<T>
         MoveNext(ref _tailIndex);
         Count++;
 
-        for (var pos = Count - 1; pos > posTo; pos--) {
-            var index = (_headIndex + pos) % _array.Length;
-            var indexPrev = index == 0 ? _array.Length - 1 : index - 1;
+        for (int pos = Count - 1; pos > posTo; pos--) {
+            int index = (_headIndex + pos) % _array.Length;
+            int indexPrev = index == 0 ? _array.Length - 1 : index - 1;
             _array[index] = _array[indexPrev];
         }
         _array[(posTo + _headIndex) % _array.Length] = item;
@@ -86,7 +89,7 @@ internal class InsertionQueue<T>
 
     private void Grow()
     {
-        var newCapacity = (int)((long)_array.Length * GROW_FACTOR / 100);
+        int newCapacity = (int)((long)_array.Length * GROW_FACTOR / 100);
         if (newCapacity < _array.Length + MINIMUM_GROW) {
             newCapacity = _array.Length + MINIMUM_GROW;
         }
@@ -95,7 +98,7 @@ internal class InsertionQueue<T>
 
     private void SetCapacity(int capacity)
     {
-        var newArray = new T[capacity];
+        T[] newArray = new T[capacity];
         if (Count > 0) {
             if (_headIndex < _tailIndex) {
                 Array.Copy(_array, _headIndex, newArray, 0, Count);

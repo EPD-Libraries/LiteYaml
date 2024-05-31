@@ -1,5 +1,5 @@
-using NUnit.Framework;
 using LiteYaml.Parser;
+using NUnit.Framework;
 
 namespace LiteYaml.Tests.Parser
 {
@@ -9,7 +9,7 @@ namespace LiteYaml.Tests.Parser
         [Test]
         public void Equals()
         {
-            var tag = new Tag("!", "something");
+            Tag tag = new("!", "something");
 
             Assert.That(tag.Equals("!something"), Is.True);
             Assert.That(tag.Equals("!somethinga"), Is.False);

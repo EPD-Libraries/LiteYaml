@@ -6,9 +6,9 @@ static class StreamHelper
 {
     public static async ValueTask<ReusableByteSequenceBuilder> ReadAsSequenceAsync(Stream stream, CancellationToken cancellation = default)
     {
-        var builder = ReusableByteSequenceBuilderPool.Rent();
+        ReusableByteSequenceBuilder builder = ReusableByteSequenceBuilderPool.Rent();
         try {
-            if (stream is MemoryStream ms && ms.TryGetBuffer(out var arraySegment)) {
+            if (stream is MemoryStream ms && ms.TryGetBuffer(out ArraySegment<byte> arraySegment)) {
                 cancellation.ThrowIfCancellationRequested();
 
                 // Emulate that we had actually "read" from the stream.
@@ -18,8 +18,8 @@ static class StreamHelper
                 return builder;
             }
 
-            var buffer = ArrayPool<byte>.Shared.Rent(65536); // initial 64K
-            var offset = 0;
+            byte[] buffer = ArrayPool<byte>.Shared.Rent(65536); // initial 64K
+            int offset = 0;
             do {
                 if (offset == buffer.Length) {
                     builder.Add(buffer, returnToPool: true);
@@ -59,7 +59,7 @@ static class StreamHelper
 
     private static int NewArrayCapacity(int size)
     {
-        var newSize = unchecked(size * 2);
+        int newSize = unchecked(size * 2);
         if ((uint)newSize > ARRAY_MEX_LENGTH) {
             newSize = ARRAY_MEX_LENGTH;
         }

@@ -1,8 +1,23 @@
 #nullable enable
+
+/* Unmerged change from project 'LiteYaml (net6.0)'
+Before:
 using System;
+After:
+using LiteYaml.Internal;
+using System;
+*/
+
+/* Unmerged change from project 'LiteYaml (net8.0)'
+Before:
+using System;
+After:
+using LiteYaml.Internal;
+using System;
+*/
+using LiteYaml.Internal;
 using System.Buffers;
 using System.Runtime.CompilerServices;
-using LiteYaml.Internal;
 
 namespace LiteYaml.Parser
 {
@@ -32,14 +47,12 @@ namespace LiteYaml.Parser
         [ThreadStatic]
         static ExpandBuffer<byte>? lineBreaksBufferStatic;
 
-        public TokenType CurrentTokenType
-        {
+        public TokenType CurrentTokenType {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => currentToken.Type;
         }
 
-        public Marker CurrentMark
-        {
+        public Marker CurrentMark {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => mark;
         }
@@ -92,26 +105,22 @@ namespace LiteYaml.Parser
 
         public bool Read()
         {
-            if (streamEndProduced)
-            {
+            if (streamEndProduced) {
                 return false;
             }
 
-            if (!tokenAvailable)
-            {
+            if (!tokenAvailable) {
                 ConsumeMoreTokens();
             }
 
-            if (currentToken.Content is Scalar scalar)
-            {
+            if (currentToken.Content is Scalar scalar) {
                 ScalarPool.Shared.Return(scalar);
             }
             currentToken = tokens.Dequeue();
             tokenAvailable = false;
             tokensParsed += 1;
 
-            if (currentToken.Type == TokenType.StreamEnd)
-            {
+            if (currentToken.Type == TokenType.StreamEnd) {
                 streamEndProduced = true;
             }
             return true;
@@ -120,19 +129,17 @@ namespace LiteYaml.Parser
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal T TakeCurrentTokenContent<T>() where T : ITokenContent
         {
-            var result = currentToken;
+            Token result = currentToken;
             currentToken = default;
             return (T)result.Content!;
         }
 
         internal bool TrySkipUnityStrippedSymbol()
         {
-            while (currentCode == YamlCodes.SPACE)
-            {
+            while (currentCode == YamlCodes.SPACE) {
                 Advance(1);
             }
-            if (reader.IsNext(YamlCodes.UnityStrippedSymbol))
-            {
+            if (reader.IsNext(YamlCodes.UnityStrippedSymbol)) {
                 Advance(YamlCodes.UnityStrippedSymbol.Length);
                 return true;
             }
@@ -141,24 +148,19 @@ namespace LiteYaml.Parser
 
         void ConsumeMoreTokens()
         {
-            while (true)
-            {
-                var needMore = tokens.Count <= 0;
-                if (!needMore)
-                {
+            while (true) {
+                bool needMore = tokens.Count <= 0;
+                if (!needMore) {
                     StaleSimpleKeyCandidates();
-                    for (var i = 0; i < simpleKeyCandidates.Length; i++)
-                    {
-                        ref var simpleKeyState = ref simpleKeyCandidates[i];
-                        if (simpleKeyState.Possible && simpleKeyState.TokenNumber == tokensParsed)
-                        {
+                    for (int i = 0; i < simpleKeyCandidates.Length; i++) {
+                        ref SimpleKeyState simpleKeyState = ref simpleKeyCandidates[i];
+                        if (simpleKeyState.Possible && simpleKeyState.TokenNumber == tokensParsed) {
                             needMore = true;
                             break;
                         }
                     }
                 }
-                if (!needMore)
-                {
+                if (!needMore) {
                     break;
                 }
                 ConsumeNextToken();
@@ -168,8 +170,7 @@ namespace LiteYaml.Parser
 
         void ConsumeNextToken()
         {
-            if (!streamStartProduced)
-            {
+            if (!streamStartProduced) {
                 ConsumeStreamStart();
                 return;
             }
@@ -178,16 +179,13 @@ namespace LiteYaml.Parser
             StaleSimpleKeyCandidates();
             UnrollIndent(mark.Col);
 
-            if (reader.End)
-            {
+            if (reader.End) {
                 ConsumeStreamEnd();
                 return;
             }
 
-            if (mark.Col == 0)
-            {
-                switch (currentCode)
-                {
+            if (mark.Col == 0) {
+                switch (currentCode) {
                     case (byte)'%':
                         ConsumeDirective();
                         return;
@@ -200,8 +198,7 @@ namespace LiteYaml.Parser
                 }
             }
 
-            switch (currentCode)
-            {
+            switch (currentCode) {
                 case YamlCodes.FLOW_SEQUENCE_START:
                     ConsumeFlowCollectionStart(TokenType.FlowSequenceStart);
                     break;
@@ -217,16 +214,16 @@ namespace LiteYaml.Parser
                 case YamlCodes.COMMA:
                     ConsumeFlowEntryStart();
                     break;
-                case YamlCodes.BLOCK_ENTRY_INDENT when !TryPeek(1, out var nextCode) ||
+                case YamlCodes.BLOCK_ENTRY_INDENT when !TryPeek(1, out byte nextCode) ||
                                                      YamlCodes.IsEmpty(nextCode):
                     ConsumeBlockEntry();
                     break;
-                case YamlCodes.EXPLICIT_KEY_INDENT when !TryPeek(1, out var nextCode) ||
+                case YamlCodes.EXPLICIT_KEY_INDENT when !TryPeek(1, out byte nextCode) ||
                                                       YamlCodes.IsEmpty(nextCode):
                     ConsumeComplexKeyStart();
                     break;
                 case YamlCodes.MAP_VALUE_INDENT
-                    when (TryPeek(1, out var nextCode) && YamlCodes.IsEmpty(nextCode)) ||
+                    when (TryPeek(1, out byte nextCode) && YamlCodes.IsEmpty(nextCode)) ||
                          (flowLevel > 0 && (YamlCodes.IsAnyFlowSymbol(nextCode) || mark.Position == adjacentValueAllowedAt)):
                     ConsumeValueStart();
                     break;
@@ -252,13 +249,13 @@ namespace LiteYaml.Parser
                     ConsumeFlowScaler(false);
                     break;
                 // Plain Scaler
-                case YamlCodes.BLOCK_ENTRY_INDENT when !TryPeek(1, out var nextCode) ||
+                case YamlCodes.BLOCK_ENTRY_INDENT when !TryPeek(1, out byte nextCode) ||
                                                      YamlCodes.IsBlank(nextCode):
                     ConsumePlainScalar();
                     break;
                 case YamlCodes.MAP_VALUE_INDENT or YamlCodes.EXPLICIT_KEY_INDENT
                     when flowLevel == 0 &&
-                         (!TryPeek(1, out var nextCode) || YamlCodes.IsBlank(nextCode)):
+                         (!TryPeek(1, out byte nextCode) || YamlCodes.IsBlank(nextCode)):
                     ConsumePlainScalar();
                     break;
                 case (byte)'%' or (byte)'@' or (byte)'`':
@@ -281,8 +278,7 @@ namespace LiteYaml.Parser
         void ConsumeStreamEnd()
         {
             // force new line
-            if (mark.Col != 0)
-            {
+            if (mark.Col != 0) {
                 mark.Col = 0;
                 mark.Line += 1;
             }
@@ -294,25 +290,20 @@ namespace LiteYaml.Parser
 
         void ConsumeBom()
         {
-            if (reader.IsNext(YamlCodes.Utf8Bom))
-            {
+            if (reader.IsNext(YamlCodes.Utf8Bom)) {
                 bool isStreamStart = mark.Position == 0;
                 Advance(YamlCodes.Utf8Bom.Length);
                 // should BOM count towards col?
                 mark.Col = 0;
-                if (!isStreamStart)
-                {
+                if (!isStreamStart) {
                     if (CurrentTokenType == TokenType.DocumentEnd ||
-                        tokens.Count > 0 && tokens.Peek().Type == TokenType.DocumentEnd)
-                    {
+                        tokens.Count > 0 && tokens.Peek().Type == TokenType.DocumentEnd) {
                         // explicitly ended document, fine
                     }
-                    else if (reader.IsNext(YamlCodes.DocStart))
-                    {
+                    else if (reader.IsNext(YamlCodes.DocStart)) {
                         // fine, next is explicit directive-end/doc-start
                     }
-                    else
-                    {
+                    else {
                         throw new YamlTokenizerException(CurrentMark, "BOM must be at the beginning of the stream or document.");
                     }
                 }
@@ -327,23 +318,18 @@ namespace LiteYaml.Parser
 
             Advance(1);
 
-            var name = ScalarPool.Shared.Rent();
-            try
-            {
+            Scalar name = ScalarPool.Shared.Rent();
+            try {
                 ConsumeDirectiveName(name);
-                if (name.SequenceEqual(YamlCodes.YamlDirectiveName))
-                {
+                if (name.SequenceEqual(YamlCodes.YamlDirectiveName)) {
                     ConsumeVersionDirectiveValue();
                 }
-                else if (name.SequenceEqual(YamlCodes.TagDirectiveName))
-                {
+                else if (name.SequenceEqual(YamlCodes.TagDirectiveName)) {
                     ConsumeTagDirectiveValue();
                 }
-                else
-                {
+                else {
                     // Skip current line
-                    while (!reader.End && !YamlCodes.IsLineBreak(currentCode))
-                    {
+                    while (!reader.End && !YamlCodes.IsLineBreak(currentCode)) {
                         Advance(1);
                     }
 
@@ -351,53 +337,44 @@ namespace LiteYaml.Parser
                     tokens.Enqueue(new Token(TokenType.TagDirective));
                 }
             }
-            finally
-            {
+            finally {
                 ScalarPool.Shared.Return(name);
             }
 
-            while (YamlCodes.IsBlank(currentCode))
-            {
+            while (YamlCodes.IsBlank(currentCode)) {
                 Advance(1);
             }
 
-            if (currentCode == YamlCodes.COMMENT)
-            {
-                while (!reader.End && !YamlCodes.IsLineBreak(currentCode))
-                {
+            if (currentCode == YamlCodes.COMMENT) {
+                while (!reader.End && !YamlCodes.IsLineBreak(currentCode)) {
                     Advance(1);
                 }
             }
 
-            if (!reader.End && !YamlCodes.IsLineBreak(currentCode))
-            {
+            if (!reader.End && !YamlCodes.IsLineBreak(currentCode)) {
                 throw new YamlTokenizerException(CurrentMark,
                     "While scanning a directive, did not find expected comment or line break");
             }
 
             // Eat a line break
-            if (YamlCodes.IsLineBreak(currentCode))
-            {
+            if (YamlCodes.IsLineBreak(currentCode)) {
                 ConsumeLineBreaks();
             }
         }
 
         void ConsumeDirectiveName(Scalar result)
         {
-            while (YamlCodes.IsAlphaNumericDashOrUnderscore(currentCode))
-            {
+            while (YamlCodes.IsAlphaNumericDashOrUnderscore(currentCode)) {
                 result.Write(currentCode);
                 Advance(1);
             }
 
-            if (result.Length <= 0)
-            {
+            if (result.Length <= 0) {
                 throw new YamlTokenizerException(CurrentMark,
                     "While scanning a directive, could not find expected directive name");
             }
 
-            if (!reader.End && !YamlCodes.IsBlank(currentCode))
-            {
+            if (!reader.End && !YamlCodes.IsBlank(currentCode)) {
                 throw new YamlTokenizerException(CurrentMark,
                     "While scanning a directive, found unexpected non-alphabetical character");
             }
@@ -405,32 +382,28 @@ namespace LiteYaml.Parser
 
         void ConsumeVersionDirectiveValue()
         {
-            while (YamlCodes.IsBlank(currentCode))
-            {
+            while (YamlCodes.IsBlank(currentCode)) {
                 Advance(1);
             }
 
-            var major = ConsumeVersionDirectiveNumber();
+            int major = ConsumeVersionDirectiveNumber();
 
-            if (currentCode != '.')
-            {
+            if (currentCode != '.') {
                 throw new YamlTokenizerException(CurrentMark,
                     "while scanning a YAML directive, did not find expected digit or '.' character");
             }
 
             Advance(1);
-            var minor = ConsumeVersionDirectiveNumber();
+            int minor = ConsumeVersionDirectiveNumber();
             tokens.Enqueue(new Token(TokenType.VersionDirective, new VersionDirective(major, minor)));
         }
 
         int ConsumeVersionDirectiveNumber()
         {
-            var value = 0;
-            var length = 0;
-            while (YamlCodes.IsNumber(currentCode))
-            {
-                if (length + 1 > 9)
-                {
+            int value = 0;
+            int length = 0;
+            while (YamlCodes.IsNumber(currentCode)) {
+                if (length + 1 > 9) {
                     throw new YamlTokenizerException(CurrentMark,
                         "While scanning a YAML directive, found exteremely long version number");
                 }
@@ -440,8 +413,7 @@ namespace LiteYaml.Parser
                 Advance(1);
             }
 
-            if (length == 0)
-            {
+            if (length == 0) {
                 throw new YamlTokenizerException(CurrentMark,
                     "While scanning a YAML directive, did not find expected version number");
             }
@@ -450,43 +422,36 @@ namespace LiteYaml.Parser
 
         void ConsumeTagDirectiveValue()
         {
-            var handle = ScalarPool.Shared.Rent();
-            var prefix = ScalarPool.Shared.Rent();
-            try
-            {
+            Scalar handle = ScalarPool.Shared.Rent();
+            Scalar prefix = ScalarPool.Shared.Rent();
+            try {
                 // Eat whitespaces.
-                while (YamlCodes.IsBlank(currentCode))
-                {
+                while (YamlCodes.IsBlank(currentCode)) {
                     Advance(1);
                 }
 
                 ConsumeTagHandle(true, handle);
 
                 // Eat whitespaces
-                if (!YamlCodes.IsBlank(currentCode))
-                {
+                if (!YamlCodes.IsBlank(currentCode)) {
                     throw new YamlTokenizerException(CurrentMark,
                         "While scanning a TAG directive, did not find expected whitespace after tag handle.");
                 }
-                while (YamlCodes.IsBlank(currentCode))
-                {
+                while (YamlCodes.IsBlank(currentCode)) {
                     Advance(1);
                 }
 
                 ConsumeTagPrefix(prefix);
 
-                if (YamlCodes.IsEmpty(currentCode) || reader.End)
-                {
+                if (YamlCodes.IsEmpty(currentCode) || reader.End) {
                     tokens.Enqueue(new Token(TokenType.TagDirective, new Tag(handle.ToString(), prefix.ToString())));
                 }
-                else
-                {
+                else {
                     throw new YamlTokenizerException(CurrentMark,
                         "While scanning TAG, did not find expected whitespace or line break");
                 }
             }
-            finally
-            {
+            finally {
                 ScalarPool.Shared.Return(handle);
                 ScalarPool.Shared.Return(prefix);
             }
@@ -535,13 +500,11 @@ namespace LiteYaml.Parser
 
         void ConsumeBlockEntry()
         {
-            if (flowLevel != 0)
-            {
+            if (flowLevel != 0) {
                 throw new YamlTokenizerException(in mark, "'-' is only valid inside a block");
             }
             // Check if we are allowed to start a new entry.
-            if (!simpleKeyAllowed)
-            {
+            if (!simpleKeyAllowed) {
                 throw new YamlTokenizerException(in mark, "Block sequence entries are not allowed in this context");
             }
             RollIndent(mark.Col, new Token(TokenType.BlockSequenceStart));
@@ -553,11 +516,9 @@ namespace LiteYaml.Parser
 
         void ConsumeComplexKeyStart()
         {
-            if (flowLevel == 0)
-            {
+            if (flowLevel == 0) {
                 // Check if we are allowed to start a new key (not necessarily simple).
-                if (!simpleKeyAllowed)
-                {
+                if (!simpleKeyAllowed) {
                     throw new YamlTokenizerException(in mark, "Mapping keys are not allowed in this context");
                 }
                 RollIndent(mark.Col, new Token(TokenType.BlockMappingStart));
@@ -571,26 +532,22 @@ namespace LiteYaml.Parser
 
         void ConsumeValueStart()
         {
-            ref var simpleKey = ref simpleKeyCandidates[^1];
-            if (simpleKey.Possible)
-            {
+            ref SimpleKeyState simpleKey = ref simpleKeyCandidates[^1];
+            if (simpleKey.Possible) {
                 // insert simple key
-                var token = new Token(TokenType.KeyStart);
+                Token token = new(TokenType.KeyStart);
                 tokens.Insert(simpleKey.TokenNumber - tokensParsed, token);
 
                 // Add the BLOCK-MAPPING-START token if needed
                 RollIndent(simpleKey.Start.Col, new Token(TokenType.BlockMappingStart), simpleKey.TokenNumber);
-                ref var lastKey = ref simpleKeyCandidates[^1];
+                ref SimpleKeyState lastKey = ref simpleKeyCandidates[^1];
                 lastKey.Possible = false;
                 simpleKeyAllowed = false;
             }
-            else
-            {
+            else {
                 // The ':' indicator follows a complex key.
-                if (flowLevel == 0)
-                {
-                    if (!simpleKeyAllowed)
-                    {
+                if (flowLevel == 0) {
+                    if (!simpleKeyAllowed) {
                         throw new YamlTokenizerException(in mark, "Mapping values are not allowed in this context");
                     }
                     RollIndent(mark.Col, new Token(TokenType.BlockMappingStart));
@@ -606,17 +563,15 @@ namespace LiteYaml.Parser
             SaveSimpleKeyCandidate();
             simpleKeyAllowed = false;
 
-            var scalar = ScalarPool.Shared.Rent();
+            Scalar scalar = ScalarPool.Shared.Rent();
             Advance(1);
 
-            while (YamlCodes.IsAlphaNumericDashOrUnderscore(currentCode))
-            {
+            while (YamlCodes.IsAlphaNumericDashOrUnderscore(currentCode)) {
                 scalar.Write(currentCode);
                 Advance(1);
             }
 
-            if (scalar.Length <= 0)
-            {
+            if (scalar.Length <= 0) {
                 throw new YamlTokenizerException(mark,
                     "while scanning an anchor or alias, did not find expected alphabetic or numeric character");
             }
@@ -630,8 +585,7 @@ namespace LiteYaml.Parser
                 currentCode != '}' &&
                 currentCode != '%' &&
                 currentCode != '@' &&
-                currentCode != '`')
-            {
+                currentCode != '`') {
                 throw new YamlTokenizerException(in mark,
                     "while scanning an anchor or alias, did not find expected alphabetic or numeric character");
             }
@@ -646,51 +600,43 @@ namespace LiteYaml.Parser
             SaveSimpleKeyCandidate();
             simpleKeyAllowed = false;
 
-            var handle = ScalarPool.Shared.Rent();
-            var suffix = ScalarPool.Shared.Rent();
+            Scalar handle = ScalarPool.Shared.Rent();
+            Scalar suffix = ScalarPool.Shared.Rent();
 
-            try
-            {
+            try {
                 // Tag spec: https://yaml.org/spec/1.2.2/#rule-c-ns-tag-property
                 // Check if the tag is in the canonical form (verbatim).
-                if (TryPeek(1, out var nextCode) && nextCode == '<')
-                {
+                if (TryPeek(1, out byte nextCode) && nextCode == '<') {
                     // Spec: https://yaml.org/spec/1.2.2/#rule-c-verbatim-tag
                     // Eat '!<'
                     Advance(2);
 
                     while (TryConsumeUriChar(suffix)) { }
 
-                    if (suffix.Length <= 0)
-                    {
+                    if (suffix.Length <= 0) {
                         throw new YamlTokenizerException(mark, "While scanning a verbatim tag, did not find valid characters.");
                     }
-                    if (currentCode != '>')
-                    {
+                    if (currentCode != '>') {
                         throw new YamlTokenizerException(mark, "While scanning a tag, did not find the expected '>'");
                     }
 
                     // Eat '>'
                     Advance(1);
                 }
-                else
-                {
+                else {
                     // The tag has either the '!suffix' or the '!handle!suffix'
                     ConsumeTagHandle(false, handle);
-                    if (handle.Length >= 2 && handle.AsSpan()[^1] == '!')
-                    {
+                    if (handle.Length >= 2 && handle.AsSpan()[^1] == '!') {
                         // Spec: https://yaml.org/spec/1.2.2/#rule-c-ns-shorthand-tag
                         // if the handle is at least 2 long and ends with '!':
                         // it's either a Named Tag Handle or if '!!' - a Secondary Tag Handle
                         // There has to be a non-zero length suffix.
                         while (TryConsumeTagChar(suffix)) { }
-                        if (suffix.Length <= 0)
-                        {
+                        if (suffix.Length <= 0) {
                             throw new YamlTokenizerException(mark, "While scanning a tag, did not find any tag-shorthand suffix.");
                         }
                     }
-                    else
-                    {
+                    else {
                         // Spec: https://yaml.org/spec/1.2.2/#rule-c-ns-shorthand-tag
                         // It's either a Primary Tag Handle with Suffix, or a Non-Specific Tag '!'.
                         // Rewrite the handle into suffix except initial '!'
@@ -699,8 +645,7 @@ namespace LiteYaml.Parser
                         handle.Write((byte)'!');
                         // Now append any remaining suffix-valid characters to the suffix.
                         while (TryConsumeTagChar(suffix)) { }
-                        if (suffix.Length <= 0)
-                        {
+                        if (suffix.Length <= 0) {
                             // Spec: https://yaml.org/spec/1.2.2/#rule-c-non-specific-tag
                             // A special case: the '!' tag.  Set the handle to '' and the
                             // suffix to '!'.
@@ -709,19 +654,16 @@ namespace LiteYaml.Parser
                     }
                 }
 
-                if (YamlCodes.IsEmpty(currentCode) || reader.End || YamlCodes.IsAnyFlowSymbol(currentCode))
-                {
+                if (YamlCodes.IsEmpty(currentCode) || reader.End || YamlCodes.IsAnyFlowSymbol(currentCode)) {
                     // ex 7.2, an empty scalar can follow a secondary tag
                     tokens.Enqueue(new Token(TokenType.Tag, new Tag(handle.ToString(), suffix.ToString())));
                 }
-                else
-                {
+                else {
                     throw new YamlTokenizerException(mark,
                         "While scanning a tag, did not find expected whitespace or line break or flow");
                 }
             }
-            finally
-            {
+            finally {
                 ScalarPool.Shared.Return(handle);
                 ScalarPool.Shared.Return(suffix);
             }
@@ -729,8 +671,7 @@ namespace LiteYaml.Parser
 
         void ConsumeTagHandle(bool directive, Scalar buf)
         {
-            if (currentCode != '!')
-            {
+            if (currentCode != '!') {
                 throw new YamlTokenizerException(mark,
                     "While scanning a tag, did not find expected '!'");
             }
@@ -738,22 +679,18 @@ namespace LiteYaml.Parser
             buf.Write(currentCode);
             Advance(1);
 
-            while (YamlCodes.IsWordChar(currentCode))
-            {
+            while (YamlCodes.IsWordChar(currentCode)) {
                 buf.Write(currentCode);
                 Advance(1);
             }
 
             // Check if the trailing character is '!' and copy it.
-            if (currentCode == '!')
-            {
+            if (currentCode == '!') {
                 buf.Write(currentCode);
                 Advance(1);
             }
-            else if (directive)
-            {
-                if (!buf.SequenceEqual(stackalloc byte[] { (byte)'!' }))
-                {
+            else if (directive) {
+                if (!buf.SequenceEqual(stackalloc byte[] { (byte)'!' })) {
                     // It's either the '!' tag or not really a tag handle.  If it's a %TAG
                     // directive, it's an error.  If it's a tag token, it must be a part of
                     // URI.
@@ -765,24 +702,21 @@ namespace LiteYaml.Parser
         void ConsumeTagPrefix(Scalar prefix)
         {
             // Spec: https://yaml.org/spec/1.2.2/#rule-ns-tag-prefix
-            if (currentCode == YamlCodes.TAG)
-            {
+            if (currentCode == YamlCodes.TAG) {
                 // https://yaml.org/spec/1.2.2/#rule-c-ns-local-tag-prefix
                 prefix.Write(currentCode);
                 Advance(1);
 
                 while (TryConsumeUriChar(prefix)) { }
             }
-            else if (YamlCodes.IsTagChar(currentCode))
-            {
+            else if (YamlCodes.IsTagChar(currentCode)) {
                 // https://yaml.org/spec/1.2.2/#rule-ns-global-tag-prefix
                 prefix.Write(currentCode);
                 Advance(1);
 
                 while (TryConsumeUriChar(prefix)) { }
             }
-            else
-            {
+            else {
                 throw new YamlTokenizerException(mark, "While parsing a tag, did not find expected tag prefix");
             }
         }
@@ -790,13 +724,11 @@ namespace LiteYaml.Parser
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         bool TryConsumeUriChar(Scalar scalar)
         {
-            if (currentCode == '%')
-            {
+            if (currentCode == '%') {
                 scalar.WriteUnicodeCodepoint(ConsumeUriEscapes());
                 return true;
             }
-            else if (YamlCodes.IsUriChar(currentCode))
-            {
+            else if (YamlCodes.IsUriChar(currentCode)) {
                 scalar.Write(currentCode);
                 Advance(1);
                 return true;
@@ -807,13 +739,11 @@ namespace LiteYaml.Parser
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         bool TryConsumeTagChar(Scalar scalar)
         {
-            if (currentCode == '%')
-            {
+            if (currentCode == '%') {
                 scalar.WriteUnicodeCodepoint(ConsumeUriEscapes());
                 return true;
             }
-            else if (YamlCodes.IsTagChar(currentCode))
-            {
+            else if (YamlCodes.IsTagChar(currentCode)) {
                 scalar.Write(currentCode);
                 Advance(1);
                 return true;
@@ -824,23 +754,19 @@ namespace LiteYaml.Parser
         // TODO: Use Uri
         int ConsumeUriEscapes()
         {
-            var width = 0;
-            var codepoint = 0;
+            int width = 0;
+            int codepoint = 0;
 
-            while (!reader.End)
-            {
-                TryPeek(1, out var hexcode0);
-                TryPeek(2, out var hexcode1);
-                if (currentCode != '%' || !YamlCodes.IsHex(hexcode0) || !YamlCodes.IsHex(hexcode1))
-                {
+            while (!reader.End) {
+                TryPeek(1, out byte hexcode0);
+                TryPeek(2, out byte hexcode1);
+                if (currentCode != '%' || !YamlCodes.IsHex(hexcode0) || !YamlCodes.IsHex(hexcode1)) {
                     throw new YamlTokenizerException(mark, "While parsing a tag, did not find URI escaped octet");
                 }
 
-                var octet = (YamlCodes.AsHex(hexcode0) << 4) + YamlCodes.AsHex(hexcode1);
-                if (width == 0)
-                {
-                    width = octet switch
-                    {
+                int octet = (YamlCodes.AsHex(hexcode0) << 4) + YamlCodes.AsHex(hexcode1);
+                if (width == 0) {
+                    width = octet switch {
                         _ when (octet & 0b1000_0000) == 0b0000_0000 => 1,
                         _ when (octet & 0b1110_0000) == 0b1100_0000 => 2,
                         _ when (octet & 0b1111_0000) == 0b1110_0000 => 3,
@@ -850,10 +776,8 @@ namespace LiteYaml.Parser
                     };
                     codepoint = octet;
                 }
-                else
-                {
-                    if ((octet & 0xc0) != 0x80)
-                    {
+                else {
+                    if ((octet & 0xc0) != 0x80) {
                         throw new YamlTokenizerException(mark,
                             "While parsing a tag, found an incorrect trailing utf8 octet");
                     }
@@ -863,8 +787,7 @@ namespace LiteYaml.Parser
                 Advance(3);
 
                 width -= 1;
-                if (width == 0)
-                {
+                if (width == 0) {
                     break;
                 }
             }
@@ -877,14 +800,14 @@ namespace LiteYaml.Parser
             SaveSimpleKeyCandidate();
             simpleKeyAllowed = true;
 
-            var chomping = 0;
-            var increment = 0;
-            var blockIndent = 0;
+            int chomping = 0;
+            int increment = 0;
+            int blockIndent = 0;
 
-            var trailingBlank = false;
-            var leadingBlank = false;
-            var leadingBreak = LineBreakState.None;
-            var scalar = ScalarPool.Shared.Rent();
+            bool trailingBlank = false;
+            bool leadingBlank = false;
+            LineBreakState leadingBreak = LineBreakState.None;
+            Scalar scalar = ScalarPool.Shared.Rent();
 
             lineBreaksBufferStatic ??= new ExpandBuffer<byte>(64);
             lineBreaksBufferStatic.Clear();
@@ -892,14 +815,11 @@ namespace LiteYaml.Parser
             // skip '|' or '>'
             Advance(1);
 
-            if (currentCode is (byte)'+' or (byte)'-')
-            {
+            if (currentCode is (byte)'+' or (byte)'-') {
                 chomping = currentCode == (byte)'+' ? 1 : -1;
                 Advance(1);
-                if (YamlCodes.IsNumber(currentCode))
-                {
-                    if (currentCode == (byte)'0')
-                    {
+                if (YamlCodes.IsNumber(currentCode)) {
+                    if (currentCode == (byte)'0') {
                         throw new YamlTokenizerException(in mark,
                             "While scanning a block scalar, found an indentation indicator equal to 0");
                     }
@@ -908,73 +828,60 @@ namespace LiteYaml.Parser
                     Advance(1);
                 }
             }
-            else if (YamlCodes.IsNumber(currentCode))
-            {
-                if (currentCode == (byte)'0')
-                {
+            else if (YamlCodes.IsNumber(currentCode)) {
+                if (currentCode == (byte)'0') {
                     throw new YamlTokenizerException(in mark,
                         "While scanning a block scalar, found an indentation indicator equal to 0");
                 }
                 increment = YamlCodes.AsHex(currentCode);
                 Advance(1);
 
-                if (currentCode is (byte)'+' or (byte)'-')
-                {
+                if (currentCode is (byte)'+' or (byte)'-') {
                     chomping = currentCode == (byte)'+' ? 1 : -1;
                     Advance(1);
                 }
             }
 
             // Eat whitespaces and comments to the end of the line.
-            while (YamlCodes.IsBlank(currentCode))
-            {
+            while (YamlCodes.IsBlank(currentCode)) {
                 Advance(1);
             }
 
-            if (currentCode == YamlCodes.COMMENT)
-            {
-                while (!reader.End && !YamlCodes.IsLineBreak(currentCode))
-                {
+            if (currentCode == YamlCodes.COMMENT) {
+                while (!reader.End && !YamlCodes.IsLineBreak(currentCode)) {
                     Advance(1);
                 }
             }
 
             // Check if we are at the end of the line.
-            if (!reader.End && !YamlCodes.IsLineBreak(currentCode))
-            {
+            if (!reader.End && !YamlCodes.IsLineBreak(currentCode)) {
                 throw new YamlTokenizerException(in mark,
                     "While scanning a block scalar, did not find expected commnet or line break");
             }
 
-            if (YamlCodes.IsLineBreak(currentCode))
-            {
+            if (YamlCodes.IsLineBreak(currentCode)) {
                 ConsumeLineBreaks();
             }
 
-            if (increment > 0)
-            {
+            if (increment > 0) {
                 blockIndent = indent >= 0 ? indent + increment : increment;
             }
 
             // Scan the leading line breaks and determine the indentation level if needed.
             ConsumeBlockScalarBreaks(ref blockIndent, ref lineBreaksBufferStatic);
 
-            while (mark.Col == blockIndent)
-            {
+            while (mark.Col == blockIndent) {
                 // We are at the beginning of a non-empty line.
                 trailingBlank = YamlCodes.IsBlank(currentCode);
                 if (!literal &&
                     leadingBreak != LineBreakState.None &&
                     !leadingBlank &&
-                    !trailingBlank)
-                {
-                    if (lineBreaksBufferStatic.Length <= 0)
-                    {
+                    !trailingBlank) {
+                    if (lineBreaksBufferStatic.Length <= 0) {
                         scalar.Write(YamlCodes.SPACE);
                     }
                 }
-                else
-                {
+                else {
                     scalar.Write(leadingBreak);
                 }
 
@@ -982,14 +889,12 @@ namespace LiteYaml.Parser
                 leadingBlank = YamlCodes.IsBlank(currentCode);
                 lineBreaksBufferStatic.Clear();
 
-                while (!reader.End && !YamlCodes.IsLineBreak(currentCode))
-                {
+                while (!reader.End && !YamlCodes.IsLineBreak(currentCode)) {
                     scalar.Write(currentCode);
                     Advance(1);
                 }
                 // break on EOF
-                if (reader.End)
-                {
+                if (reader.End) {
                     // treat EOF as LF for chomping
                     leadingBreak = LineBreakState.Lf;
                     break;
@@ -1001,49 +906,41 @@ namespace LiteYaml.Parser
             }
 
             // Chomp the tail.
-            if (chomping != -1)
-            {
+            if (chomping != -1) {
                 scalar.Write(leadingBreak);
             }
-            if (chomping == 1)
-            {
+            if (chomping == 1) {
                 scalar.Write(lineBreaksBufferStatic.AsSpan());
             }
 
-            var tokenType = literal ? TokenType.LiteralScalar : TokenType.FoldedScalar;
+            TokenType tokenType = literal ? TokenType.LiteralScalar : TokenType.FoldedScalar;
             tokens.Enqueue(new Token(tokenType, scalar));
         }
 
         void ConsumeBlockScalarBreaks(ref int blockIndent, ref ExpandBuffer<byte> blockLineBreaks)
         {
-            var maxIndent = 0;
-            while (true)
-            {
+            int maxIndent = 0;
+            while (true) {
                 while ((blockIndent == 0 || mark.Col < blockIndent) &&
-                       currentCode == YamlCodes.SPACE)
-                {
+                       currentCode == YamlCodes.SPACE) {
                     Advance(1);
                 }
 
-                if (mark.Col > maxIndent)
-                {
+                if (mark.Col > maxIndent) {
                     maxIndent = mark.Col;
                 }
 
                 // Check for a tab character messing the indentation.
-                if ((blockIndent == 0 || mark.Col < blockIndent) && currentCode == YamlCodes.TAB)
-                {
+                if ((blockIndent == 0 || mark.Col < blockIndent) && currentCode == YamlCodes.TAB) {
                     throw new YamlTokenizerException(in mark,
                         "while scanning a block scalar, found a tab character where an indentation space is expected");
                 }
 
-                if (!YamlCodes.IsLineBreak(currentCode))
-                {
+                if (!YamlCodes.IsLineBreak(currentCode)) {
                     break;
                 }
 
-                switch (ConsumeLineBreaks())
-                {
+                switch (ConsumeLineBreaks()) {
                     case LineBreakState.Lf:
                         blockLineBreaks.Add(YamlCodes.LF);
                         break;
@@ -1057,15 +954,12 @@ namespace LiteYaml.Parser
                 }
             }
 
-            if (blockIndent == 0)
-            {
+            if (blockIndent == 0) {
                 blockIndent = maxIndent;
-                if (blockIndent < indent + 1)
-                {
+                if (blockIndent < indent + 1) {
                     blockIndent = indent + 1;
                 }
-                else if (blockIndent < 1)
-                {
+                else if (blockIndent < 1) {
                     blockIndent = 1;
                 }
             }
@@ -1076,30 +970,27 @@ namespace LiteYaml.Parser
             SaveSimpleKeyCandidate();
             simpleKeyAllowed = false;
 
-            var leadingBreak = default(LineBreakState);
-            var trailingBreak = default(LineBreakState);
-            var isLeadingBlanks = false;
-            var scalar = ScalarPool.Shared.Rent();
+            LineBreakState leadingBreak = default;
+            LineBreakState trailingBreak = default;
+            bool isLeadingBlanks = false;
+            Scalar scalar = ScalarPool.Shared.Rent();
 
             Span<byte> whitespaceBuffer = stackalloc byte[32];
-            var whitespaceLength = 0;
+            int whitespaceLength = 0;
 
             // Eat the left quote
             Advance(1);
 
-            while (true)
-            {
+            while (true) {
                 if (mark.Col == 0 &&
                     (reader.IsNext(YamlCodes.StreamStart) ||
                      reader.IsNext(YamlCodes.DocStart)) &&
-                    !TryPeek(3, out _))
-                {
+                    !TryPeek(3, out _)) {
                     throw new YamlTokenizerException(mark,
                         "while scanning a quoted scalar, found unexpected document indicator");
                 }
 
-                if (reader.End)
-                {
+                if (reader.End) {
                     throw new YamlTokenizerException(mark,
                         "while scanning a quoted scalar, found unexpected end of stream");
                 }
@@ -1107,12 +998,10 @@ namespace LiteYaml.Parser
                 isLeadingBlanks = false;
 
                 // Consume non-blank characters
-                while (!reader.End && !YamlCodes.IsEmpty(currentCode))
-                {
-                    switch (currentCode)
-                    {
+                while (!reader.End && !YamlCodes.IsEmpty(currentCode)) {
+                    switch (currentCode) {
                         // Check for an escaped single quote
-                        case YamlCodes.SINGLE_QUOTE when TryPeek(1, out var nextCode) &&
+                        case YamlCodes.SINGLE_QUOTE when TryPeek(1, out byte nextCode) &&
                                                         nextCode == YamlCodes.SINGLE_QUOTE && singleQuote:
                             scalar.Write((byte)'\'');
                             Advance(2);
@@ -1123,7 +1012,7 @@ namespace LiteYaml.Parser
                             goto LOOPEND;
                         // Check for an escaped line break.
                         case (byte)'\\' when !singleQuote &&
-                                             TryPeek(1, out var nextCode) &&
+                                             TryPeek(1, out byte nextCode) &&
                                              YamlCodes.IsLineBreak(nextCode):
                             Advance(1);
                             ConsumeLineBreaks();
@@ -1131,10 +1020,9 @@ namespace LiteYaml.Parser
                             break;
                         // Check for an escape sequence.
                         case (byte)'\\' when !singleQuote:
-                            var codeLength = 0;
-                            TryPeek(1, out var escaped);
-                            switch (escaped)
-                            {
+                            int codeLength = 0;
+                            TryPeek(1, out byte escaped);
+                            switch (escaped) {
                                 case (byte)'0':
                                     scalar.Write((byte)'\0');
                                     break;
@@ -1206,17 +1094,13 @@ namespace LiteYaml.Parser
 
                             Advance(2);
                             // Consume an arbitrary escape code.
-                            if (codeLength > 0)
-                            {
-                                var codepoint = 0;
-                                for (var i = 0; i < codeLength; i++)
-                                {
-                                    if (TryPeek(i, out var hex) && YamlCodes.IsHex(hex))
-                                    {
+                            if (codeLength > 0) {
+                                int codepoint = 0;
+                                for (int i = 0; i < codeLength; i++) {
+                                    if (TryPeek(i, out byte hex) && YamlCodes.IsHex(hex)) {
                                         codepoint = (codepoint << 4) + YamlCodes.AsHex(hex);
                                     }
-                                    else
-                                    {
+                                    else {
                                         throw new YamlTokenizerException(mark,
                                             "While parsing a quoted scalar, did not find expected hexadecimal number");
                                     }
@@ -1234,30 +1118,23 @@ namespace LiteYaml.Parser
                 }
 
                 // Consume blank characters.
-                while (YamlCodes.IsBlank(currentCode) || YamlCodes.IsLineBreak(currentCode))
-                {
-                    if (YamlCodes.IsBlank(currentCode))
-                    {
+                while (YamlCodes.IsBlank(currentCode) || YamlCodes.IsLineBreak(currentCode)) {
+                    if (YamlCodes.IsBlank(currentCode)) {
                         // Consume a space or a tab character.
-                        if (!isLeadingBlanks)
-                        {
-                            if (whitespaceBuffer.Length <= whitespaceLength)
-                            {
+                        if (!isLeadingBlanks) {
+                            if (whitespaceBuffer.Length <= whitespaceLength) {
                                 whitespaceBuffer = new byte[whitespaceBuffer.Length * 2];
                             }
                             whitespaceBuffer[whitespaceLength++] = currentCode;
                         }
                         Advance(1);
                     }
-                    else
-                    {
+                    else {
                         // Check if it is a first line break.
-                        if (isLeadingBlanks)
-                        {
+                        if (isLeadingBlanks) {
                             trailingBreak = ConsumeLineBreaks();
                         }
-                        else
-                        {
+                        else {
                             whitespaceLength = 0;
                             leadingBreak = ConsumeLineBreaks();
                             isLeadingBlanks = true;
@@ -1266,29 +1143,23 @@ namespace LiteYaml.Parser
                 }
 
                 // Join the whitespaces or fold line breaks.
-                if (isLeadingBlanks)
-                {
-                    if (leadingBreak == LineBreakState.None)
-                    {
+                if (isLeadingBlanks) {
+                    if (leadingBreak == LineBreakState.None) {
                         scalar.Write(trailingBreak);
                         trailingBreak = LineBreakState.None;
                     }
-                    else
-                    {
-                        if (trailingBreak == LineBreakState.None)
-                        {
+                    else {
+                        if (trailingBreak == LineBreakState.None) {
                             scalar.Write(YamlCodes.SPACE);
                         }
-                        else
-                        {
+                        else {
                             scalar.Write(trailingBreak);
                             trailingBreak = LineBreakState.None;
                         }
                         leadingBreak = LineBreakState.None;
                     }
                 }
-                else
-                {
+                else {
                     scalar.Write(whitespaceBuffer[..whitespaceLength]);
                     whitespaceLength = 0;
                 }
@@ -1314,68 +1185,53 @@ namespace LiteYaml.Parser
             SaveSimpleKeyCandidate();
             simpleKeyAllowed = false;
 
-            var currentIndent = indent + 1;
-            var leadingBreak = default(LineBreakState);
-            var trailingBreak = default(LineBreakState);
-            var isLeadingBlanks = false;
-            var scalar = ScalarPool.Shared.Rent();
+            int currentIndent = indent + 1;
+            LineBreakState leadingBreak = default;
+            LineBreakState trailingBreak = default;
+            bool isLeadingBlanks = false;
+            Scalar scalar = ScalarPool.Shared.Rent();
 
             Span<byte> whitespaceBuffer = stackalloc byte[16];
-            var whitespaceLength = 0;
+            int whitespaceLength = 0;
 
-            while (true)
-            {
+            while (true) {
                 // Check for a document indicator
-                if (mark.Col == 0)
-                {
-                    if (currentCode == (byte)'-' && reader.IsNext(YamlCodes.StreamStart) && IsEmptyNext(YamlCodes.StreamStart.Length))
-                    {
+                if (mark.Col == 0) {
+                    if (currentCode == (byte)'-' && reader.IsNext(YamlCodes.StreamStart) && IsEmptyNext(YamlCodes.StreamStart.Length)) {
                         break;
                     }
-                    if (currentCode == (byte)'.' && reader.IsNext(YamlCodes.DocStart) && IsEmptyNext(YamlCodes.DocStart.Length))
-                    {
+                    if (currentCode == (byte)'.' && reader.IsNext(YamlCodes.DocStart) && IsEmptyNext(YamlCodes.DocStart.Length)) {
                         break;
                     }
                 }
-                if (currentCode == YamlCodes.COMMENT)
-                {
+                if (currentCode == YamlCodes.COMMENT) {
                     break;
                 }
 
-                while (!reader.End && !YamlCodes.IsEmpty(currentCode))
-                {
-                    if (currentCode == YamlCodes.MAP_VALUE_INDENT)
-                    {
-                        var hasNext = TryPeek(1, out var nextCode);
+                while (!reader.End && !YamlCodes.IsEmpty(currentCode)) {
+                    if (currentCode == YamlCodes.MAP_VALUE_INDENT) {
+                        bool hasNext = TryPeek(1, out byte nextCode);
                         if (!hasNext ||
                             YamlCodes.IsEmpty(nextCode) ||
-                            (flowLevel > 0 && YamlCodes.IsAnyFlowSymbol(nextCode)))
-                        {
+                            (flowLevel > 0 && YamlCodes.IsAnyFlowSymbol(nextCode))) {
                             break;
                         }
                     }
-                    else if (flowLevel > 0 && YamlCodes.IsAnyFlowSymbol(currentCode))
-                    {
+                    else if (flowLevel > 0 && YamlCodes.IsAnyFlowSymbol(currentCode)) {
                         break;
                     }
 
-                    if (isLeadingBlanks || whitespaceLength > 0)
-                    {
-                        if (isLeadingBlanks)
-                        {
-                            if (leadingBreak == LineBreakState.None)
-                            {
+                    if (isLeadingBlanks || whitespaceLength > 0) {
+                        if (isLeadingBlanks) {
+                            if (leadingBreak == LineBreakState.None) {
                                 scalar.Write(trailingBreak);
                                 trailingBreak = LineBreakState.None;
                             }
-                            else
-                            {
-                                if (trailingBreak == LineBreakState.None)
-                                {
+                            else {
+                                if (trailingBreak == LineBreakState.None) {
                                     scalar.Write(YamlCodes.SPACE);
                                 }
-                                else
-                                {
+                                else {
                                     scalar.Write(trailingBreak);
                                     trailingBreak = LineBreakState.None;
                                 }
@@ -1383,8 +1239,7 @@ namespace LiteYaml.Parser
                             }
                             isLeadingBlanks = false;
                         }
-                        else
-                        {
+                        else {
                             scalar.Write(whitespaceBuffer[..whitespaceLength]);
                             whitespaceLength = 0;
                         }
@@ -1395,27 +1250,21 @@ namespace LiteYaml.Parser
                 }
 
                 // is the end?
-                if (!YamlCodes.IsEmpty(currentCode))
-                {
+                if (!YamlCodes.IsEmpty(currentCode)) {
                     break;
                 }
 
                 // whitespaces or line-breaks
-                while (YamlCodes.IsEmpty(currentCode))
-                {
+                while (YamlCodes.IsEmpty(currentCode)) {
                     // whitespaces
-                    if (YamlCodes.IsBlank(currentCode))
-                    {
-                        if (isLeadingBlanks && mark.Col < currentIndent && currentCode == YamlCodes.TAB)
-                        {
+                    if (YamlCodes.IsBlank(currentCode)) {
+                        if (isLeadingBlanks && mark.Col < currentIndent && currentCode == YamlCodes.TAB) {
                             throw new YamlTokenizerException(mark, "While scanning a plain scaler, found a tab");
                         }
-                        if (!isLeadingBlanks)
-                        {
+                        if (!isLeadingBlanks) {
                             // If the buffer on the stack is insufficient, it is decompressed.
                             // This is probably a very rare case.
-                            if (whitespaceLength >= whitespaceBuffer.Length)
-                            {
+                            if (whitespaceLength >= whitespaceBuffer.Length) {
                                 whitespaceBuffer = new byte[whitespaceBuffer.Length * 2];
                             }
                             whitespaceBuffer[whitespaceLength++] = currentCode;
@@ -1423,15 +1272,12 @@ namespace LiteYaml.Parser
                         Advance(1);
                     }
                     // line-break
-                    else
-                    {
+                    else {
                         // Check if it is a first line break
-                        if (isLeadingBlanks)
-                        {
+                        if (isLeadingBlanks) {
                             trailingBreak = ConsumeLineBreaks();
                         }
-                        else
-                        {
+                        else {
                             leadingBreak = ConsumeLineBreaks();
                             isLeadingBlanks = true;
                             whitespaceLength = 0;
@@ -1440,8 +1286,7 @@ namespace LiteYaml.Parser
                 }
 
                 // check indentation level
-                if (flowLevel == 0 && mark.Col < currentIndent)
-                {
+                if (flowLevel == 0 && mark.Col < currentIndent) {
                     break;
                 }
             }
@@ -1452,10 +1297,8 @@ namespace LiteYaml.Parser
 
         void SkipToNextToken()
         {
-            while (true)
-            {
-                switch (currentCode)
-                {
+            while (true) {
+                switch (currentCode) {
                     case YamlCodes.SPACE:
                         Advance(1);
                         break;
@@ -1465,12 +1308,13 @@ namespace LiteYaml.Parser
                     case YamlCodes.LF:
                     case YamlCodes.CR:
                         ConsumeLineBreaks();
-                        if (flowLevel == 0)
+                        if (flowLevel == 0) {
                             simpleKeyAllowed = true;
+                        }
+
                         break;
                     case YamlCodes.COMMENT:
-                        while (!reader.End && !YamlCodes.IsLineBreak(currentCode))
-                        {
+                        while (!reader.End && !YamlCodes.IsLineBreak(currentCode)) {
                             Advance(1);
                         }
                         break;
@@ -1486,16 +1330,13 @@ namespace LiteYaml.Parser
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void Advance(int offset)
         {
-            for (var i = 0; i < offset; i++)
-            {
+            for (int i = 0; i < offset; i++) {
                 mark.Position += 1;
-                if (currentCode == YamlCodes.LF)
-                {
+                if (currentCode == YamlCodes.LF) {
                     mark.Line += 1;
                     mark.Col = 0;
                 }
-                else
-                {
+                else {
                     mark.Col += 1;
                 }
                 reader.Advance(1);
@@ -1505,14 +1346,13 @@ namespace LiteYaml.Parser
 
         LineBreakState ConsumeLineBreaks()
         {
-            if (reader.End)
+            if (reader.End) {
                 return LineBreakState.None;
+            }
 
-            switch (currentCode)
-            {
+            switch (currentCode) {
                 case YamlCodes.CR:
-                    if (TryPeek(1, out var secondCode) && secondCode == YamlCodes.LF)
-                    {
+                    if (TryPeek(1, out byte secondCode) && secondCode == YamlCodes.LF) {
                         Advance(2);
                         return LineBreakState.CrLf;
                     }
@@ -1527,14 +1367,11 @@ namespace LiteYaml.Parser
 
         void StaleSimpleKeyCandidates()
         {
-            for (var i = 0; i < simpleKeyCandidates.Length; i++)
-            {
-                ref var simpleKey = ref simpleKeyCandidates[i];
+            for (int i = 0; i < simpleKeyCandidates.Length; i++) {
+                ref SimpleKeyState simpleKey = ref simpleKeyCandidates[i];
                 if (simpleKey.Possible &&
-                    (simpleKey.Start.Line < mark.Line || simpleKey.Start.Position + 1024 < mark.Position))
-                {
-                    if (simpleKey.Required)
-                    {
+                    (simpleKey.Start.Line < mark.Line || simpleKey.Start.Position + 1024 < mark.Position)) {
+                    if (simpleKey.Required) {
                         throw new YamlTokenizerException(mark, "Simple key expect ':'");
                     }
                     simpleKey.Possible = false;
@@ -1544,19 +1381,16 @@ namespace LiteYaml.Parser
 
         void SaveSimpleKeyCandidate()
         {
-            if (!simpleKeyAllowed)
-            {
+            if (!simpleKeyAllowed) {
                 return;
             }
 
-            ref var last = ref simpleKeyCandidates[^1];
-            if (last is { Possible: true, Required: true })
-            {
+            ref SimpleKeyState last = ref simpleKeyCandidates[^1];
+            if (last is { Possible: true, Required: true }) {
                 throw new YamlTokenizerException(mark, "Simple key expected");
             }
 
-            simpleKeyCandidates[^1] = new SimpleKeyState
-            {
+            simpleKeyCandidates[^1] = new SimpleKeyState {
                 Start = mark,
                 Possible = true,
                 Required = flowLevel > 0 && indent == mark.Col,
@@ -1566,9 +1400,8 @@ namespace LiteYaml.Parser
 
         void RemoveSimpleKeyCandidate()
         {
-            ref var last = ref simpleKeyCandidates[^1];
-            if (last is { Possible: true, Required: true })
-            {
+            ref SimpleKeyState last = ref simpleKeyCandidates[^1];
+            if (last is { Possible: true, Required: true }) {
                 throw new YamlTokenizerException(mark, "Simple key expected");
             }
             last.Possible = false;
@@ -1576,31 +1409,26 @@ namespace LiteYaml.Parser
 
         void RollIndent(int colTo, in Token nextToken, int insertNumber = -1)
         {
-            if (flowLevel > 0 || indent >= colTo)
-            {
+            if (flowLevel > 0 || indent >= colTo) {
                 return;
             }
 
             indents.Add(indent);
             indent = colTo;
-            if (insertNumber >= 0)
-            {
+            if (insertNumber >= 0) {
                 tokens.Insert(insertNumber - tokensParsed, nextToken);
             }
-            else
-            {
+            else {
                 tokens.Enqueue(nextToken);
             }
         }
 
         void UnrollIndent(int col)
         {
-            if (flowLevel > 0)
-            {
+            if (flowLevel > 0) {
                 return;
             }
-            while (indent > col)
-            {
+            while (indent > col) {
                 tokens.Enqueue(new Token(TokenType.BlockEnd));
                 indent = indents.Pop();
             }
@@ -1616,40 +1444,38 @@ namespace LiteYaml.Parser
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void DecreaseFlowLevel()
         {
-            if (flowLevel <= 0)
+            if (flowLevel <= 0) {
                 return;
+            }
+
             flowLevel--;
             simpleKeyCandidates.Pop();
         }
 
         readonly bool IsEmptyNext(int offset)
         {
-            if (reader.End || reader.Remaining <= offset)
+            if (reader.End || reader.Remaining <= offset) {
                 return true;
+            }
 
             // If offset doesn't fall inside current segment move to next until we find correct one
-            if (reader.CurrentSpanIndex + offset <= reader.CurrentSpan.Length - 1)
-            {
-                var nextCode = reader.CurrentSpan[reader.CurrentSpanIndex + offset];
+            if (reader.CurrentSpanIndex + offset <= reader.CurrentSpan.Length - 1) {
+                byte nextCode = reader.CurrentSpan[reader.CurrentSpanIndex + offset];
                 return YamlCodes.IsEmpty(nextCode);
             }
 
-            var remainingOffset = offset;
-            var nextPosition = reader.Position;
+            int remainingOffset = offset;
+            SequencePosition nextPosition = reader.Position;
             ReadOnlyMemory<byte> currentMemory;
 
-            while (reader.Sequence.TryGet(ref nextPosition, out currentMemory, advance: true))
-            {
+            while (reader.Sequence.TryGet(ref nextPosition, out currentMemory, advance: true)) {
                 // Skip empty segment
-                if (currentMemory.Length > 0)
-                {
-                    if (remainingOffset >= currentMemory.Length)
-                    {
+                if (currentMemory.Length > 0) {
+                    if (remainingOffset >= currentMemory.Length) {
                         // Subtract current non consumed data
                         remainingOffset -= currentMemory.Length;
                     }
-                    else
-                    {
+                    else {
                         break;
                     }
                 }
@@ -1661,35 +1487,29 @@ namespace LiteYaml.Parser
         readonly bool TryPeek(long offset, out byte value)
         {
             // If we've got data and offset is not out of bounds
-            if (reader.End || reader.Remaining <= offset)
-            {
+            if (reader.End || reader.Remaining <= offset) {
                 value = default;
                 return false;
             }
 
             // If offset doesn't fall inside current segment move to next until we find correct one
-            if (reader.CurrentSpanIndex + offset <= reader.CurrentSpan.Length - 1)
-            {
+            if (reader.CurrentSpanIndex + offset <= reader.CurrentSpan.Length - 1) {
                 value = reader.CurrentSpan[reader.CurrentSpanIndex + (int)offset];
                 return true;
             }
 
-            var remainingOffset = offset;
-            var nextPosition = reader.Position;
+            long remainingOffset = offset;
+            SequencePosition nextPosition = reader.Position;
             ReadOnlyMemory<byte> currentMemory;
 
-            while (reader.Sequence.TryGet(ref nextPosition, out currentMemory, advance: true))
-            {
+            while (reader.Sequence.TryGet(ref nextPosition, out currentMemory, advance: true)) {
                 // Skip empty segment
-                if (currentMemory.Length > 0)
-                {
-                    if (remainingOffset >= currentMemory.Length)
-                    {
+                if (currentMemory.Length > 0) {
+                    if (remainingOffset >= currentMemory.Length) {
                         // Subtract current non consumed data
                         remainingOffset -= currentMemory.Length;
                     }
-                    else
-                    {
+                    else {
                         break;
                     }
                 }

@@ -18,7 +18,10 @@ internal class ExpandBuffer<T>(int capacity)
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Span<T> AsSpan() => _buffer.AsSpan(0, Length);
+    public Span<T> AsSpan()
+    {
+        return _buffer.AsSpan(0, Length);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Span<T> AsSpan(int length)
@@ -36,7 +39,10 @@ internal class ExpandBuffer<T>(int capacity)
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ref T Peek() => ref _buffer[Length - 1];
+    public ref T Peek()
+    {
+        return ref _buffer[Length - 1];
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ref T Pop()
@@ -73,11 +79,12 @@ internal class ExpandBuffer<T>(int capacity)
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void SetCapacity(int newCapacity)
     {
-        if (_buffer.Length >= newCapacity)
+        if (_buffer.Length >= newCapacity) {
             return;
+        }
 
         // var newBuffer = ArrayPool<T>.Shared.Rent(newCapacity);
-        var newBuffer = new T[newCapacity];
+        T[] newBuffer = new T[newCapacity];
         _buffer.AsSpan(0, Length).CopyTo(newBuffer);
         // ArrayPool<T>.Shared.Return(buffer);
         _buffer = newBuffer;
@@ -86,7 +93,7 @@ internal class ExpandBuffer<T>(int capacity)
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void Grow()
     {
-        var newCapacity = _buffer.Length * GROW_FACTOR / 100;
+        int newCapacity = _buffer.Length * GROW_FACTOR / 100;
         if (newCapacity < _buffer.Length + MINIMUM_GROW) {
             newCapacity = _buffer.Length + MINIMUM_GROW;
         }

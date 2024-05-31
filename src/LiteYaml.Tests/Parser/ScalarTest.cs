@@ -1,6 +1,5 @@
-using NUnit.Framework;
 using LiteYaml.Internal;
-using LiteYaml.Parser;
+using NUnit.Framework;
 using System.Text;
 
 namespace LiteYaml.Tests.Parser
@@ -27,7 +26,7 @@ namespace LiteYaml.Tests.Parser
         [TestCase("FALSE", ExpectedResult = false)]
         public bool Boolean(string input)
         {
-            var parsed = FromString(input).TryGetBool(out var value);
+            bool parsed = FromString(input).TryGetBool(out bool value);
             Assert.That(parsed, Is.True);
             return value;
         }
@@ -44,7 +43,7 @@ namespace LiteYaml.Tests.Parser
         [TestCase("0o00000000000000000000000", ExpectedResult = 0)]
         public int Integer(string input)
         {
-            var parsed = FromString(input).TryGetInt32(out var value);
+            bool parsed = FromString(input).TryGetInt32(out int value);
             Assert.That(parsed, Is.True);
             return value;
         }
@@ -54,7 +53,7 @@ namespace LiteYaml.Tests.Parser
         [TestCase("0o10000000000000000000000")]
         public void IntegerOverflow(string input)
         {
-            var parsed = FromString(input).TryGetUInt64(out _);
+            bool parsed = FromString(input).TryGetUInt64(out _);
             Assert.That(parsed, Is.False);
         }
 
@@ -66,7 +65,7 @@ namespace LiteYaml.Tests.Parser
         [TestCase("-2E+05", ExpectedResult = -200000)]
         public double Float(string input)
         {
-            var parsed = FromString(input).TryGetDouble(out var value);
+            bool parsed = FromString(input).TryGetDouble(out double value);
             Assert.That(parsed, Is.True);
             return value;
         }
@@ -77,7 +76,7 @@ namespace LiteYaml.Tests.Parser
         [TestCase(".nan")]
         public void Nan(string input)
         {
-            var parsed = FromString(input).TryGetDouble(out var value);
+            bool parsed = FromString(input).TryGetDouble(out double value);
             Assert.That(parsed, Is.True);
             Assert.That(double.IsNaN(value), Is.True);
         }
@@ -88,7 +87,7 @@ namespace LiteYaml.Tests.Parser
         [TestCase(".INF")]
         public void Infinity(string input)
         {
-            var parsed = FromString(input).TryGetDouble(out var value);
+            bool parsed = FromString(input).TryGetDouble(out double value);
             Assert.That(parsed, Is.True);
             Assert.That(double.IsInfinity(value), Is.True);
         }
@@ -99,14 +98,14 @@ namespace LiteYaml.Tests.Parser
         [TestCase("-.INF")]
         public void NegativeInfinity(string input)
         {
-            var parsed = FromString(input).TryGetDouble(out var value);
+            bool parsed = FromString(input).TryGetDouble(out double value);
             Assert.That(parsed, Is.True);
             Assert.That(double.IsNegativeInfinity(value), Is.True);
         }
 
         static Scalar FromString(string input)
         {
-            var bytes = Encoding.UTF8.GetBytes(input);
+            byte[] bytes = Encoding.UTF8.GetBytes(input);
             return new Scalar(bytes);
         }
     }

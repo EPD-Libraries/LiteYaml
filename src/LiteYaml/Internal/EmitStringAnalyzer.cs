@@ -12,8 +12,7 @@ readonly struct EmitStringInfo(int lines, bool needsQuotes, bool isReservedWord)
 
     public ScalarStyle SuggestScalarStyle()
     {
-        if (Lines <= 1)
-        {
+        if (Lines <= 1) {
             return NeedsQuotes ? ScalarStyle.DoubleQuoted : ScalarStyle.Plain;
         }
         return ScalarStyle.Literal;
@@ -35,26 +34,23 @@ internal static class EmitStringAnalyzer
 
     public static EmitStringInfo Analyze(ReadOnlySpan<char> chars)
     {
-        if (chars.Length <= 0)
-        {
+        if (chars.Length <= 0) {
             return new EmitStringInfo(0, true, false);
         }
 
-        var isReservedWord = IsReservedWord(chars);
+        bool isReservedWord = IsReservedWord(chars);
 
-        var first = chars[0];
-        var last = chars[^1];
+        char first = chars[0];
+        char last = chars[^1];
 
-        var needsQuotes = isReservedWord ||
+        bool needsQuotes = isReservedWord ||
                           first == YamlCodes.SPACE ||
                           last == YamlCodes.SPACE ||
                           first is '&' or '*' or '?' or '|' or '-' or '<' or '>' or '=' or '!' or '%' or '@' or '.';
 
-        var lines = 1;
-        foreach (var ch in chars)
-        {
-            switch (ch)
-            {
+        int lines = 1;
+        foreach (char ch in chars) {
+            switch (ch) {
                 case ':':
                 case '{':
                 case '[':
@@ -72,8 +68,7 @@ internal static class EmitStringAnalyzer
             }
         }
 
-        if (last == '\n')
-        {
+        if (last == '\n') {
             lines--;
         }
         return new EmitStringInfo(lines, needsQuotes, isReservedWord);
@@ -81,41 +76,34 @@ internal static class EmitStringAnalyzer
 
     internal static StringBuilder BuildLiteralScalar(ReadOnlySpan<char> originalValue, int indentCharCount)
     {
-        var chompHint = '\0';
-        if (originalValue.Length > 0 && originalValue[^1] == '\n')
-        {
+        char chompHint = '\0';
+        if (originalValue.Length > 0 && originalValue[^1] == '\n') {
             if (originalValue[^2] == '\n' ||
-                (originalValue[^2] == '\r' && originalValue[^3] == '\n'))
-            {
+                (originalValue[^2] == '\r' && originalValue[^3] == '\n')) {
                 chompHint = '+';
             }
         }
-        else
-        {
+        else {
             chompHint = '-';
         }
 
-        var stringBuilder = (stringBuilderThreadStatic ??= new StringBuilder(1024)).Clear();
+        StringBuilder stringBuilder = (stringBuilderThreadStatic ??= new StringBuilder(1024)).Clear();
         stringBuilder.Append('|');
-        if (chompHint > 0)
-        {
+        if (chompHint > 0) {
             stringBuilder.Append(chompHint);
         }
         stringBuilder.Append('\n');
         AppendWhiteSpace(stringBuilder, indentCharCount);
 
-        for (var i = 0; i < originalValue.Length; i++)
-        {
-            var ch = originalValue[i];
+        for (int i = 0; i < originalValue.Length; i++) {
+            char ch = originalValue[i];
             stringBuilder.Append(ch);
-            if (ch == '\n' && i < originalValue.Length - 1)
-            {
+            if (ch == '\n' && i < originalValue.Length - 1) {
                 AppendWhiteSpace(stringBuilder, indentCharCount);
             }
         }
 
-        if (chompHint == '-')
-        {
+        if (chompHint == '-') {
             stringBuilder.Append('\n');
         }
         return stringBuilder;
@@ -123,15 +111,13 @@ internal static class EmitStringAnalyzer
 
     internal static StringBuilder BuildQuotedScalar(ReadOnlySpan<char> originalValue, bool doubleQuote = true)
     {
-        var stringBuilder = GetStringBuilder();
+        StringBuilder stringBuilder = GetStringBuilder();
 
-        var quoteChar = doubleQuote ? '"' : '\'';
+        char quoteChar = doubleQuote ? '"' : '\'';
         stringBuilder.Append(quoteChar);
 
-        foreach (var ch in originalValue)
-        {
-            switch (ch)
-            {
+        foreach (char ch in originalValue) {
+            switch (ch) {
                 case '"' when doubleQuote:
                     stringBuilder.Append("\\\"");
                     break;
@@ -270,14 +256,15 @@ internal static class EmitStringAnalyzer
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    static StringBuilder GetStringBuilder() =>
-        (stringBuilderThreadStatic ??= new StringBuilder(1024)).Clear();
+    static StringBuilder GetStringBuilder()
+    {
+        return (stringBuilderThreadStatic ??= new StringBuilder(1024)).Clear();
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static void AppendWhiteSpace(StringBuilder stringBuilder, int length)
     {
-        if (length > _whiteSpaces.Length)
-        {
+        if (length > _whiteSpaces.Length) {
             _whiteSpaces = Enumerable.Repeat(' ', length * 2).ToArray();
         }
         stringBuilder.Append(_whiteSpaces.AsSpan(0, length));

@@ -10,7 +10,7 @@ static class ReusableByteSequenceBuilderPool
 
     public static ReusableByteSequenceBuilder Rent()
     {
-        if (_queue.TryDequeue(out var builder)) {
+        if (_queue.TryDequeue(out ReusableByteSequenceBuilder? builder)) {
             return builder;
         }
 
@@ -42,7 +42,7 @@ class ReusableByteSequenceSegment : ReadOnlySequenceSegment<byte>
     public void Reset()
     {
         if (_returnToPool) {
-            if (MemoryMarshal.TryGetArray(Memory, out var segment) && segment.Array != null) {
+            if (MemoryMarshal.TryGetArray(Memory, out ArraySegment<byte> segment) && segment.Array != null) {
                 ArrayPool<byte>.Shared.Return(segment.Array);
             }
         }
@@ -65,7 +65,7 @@ class ReusableByteSequenceBuilder
 
     public void Add(ReadOnlyMemory<byte> buffer, bool returnToPool)
     {
-        if (!_segmentPool.TryPop(out var segment)) {
+        if (!_segmentPool.TryPop(out ReusableByteSequenceSegment? segment)) {
             segment = new ReusableByteSequenceSegment();
         }
 
@@ -95,19 +95,19 @@ class ReusableByteSequenceBuilder
 
         long running = 0;
 
-        for (var i = 0; i < _segments.Count; i++) {
-            var next = i < _segments.Count - 1 ? _segments[i + 1] : null;
+        for (int i = 0; i < _segments.Count; i++) {
+            ReusableByteSequenceSegment? next = i < _segments.Count - 1 ? _segments[i + 1] : null;
             _segments[i].SetRunningIndexAndNext(running, next);
             running += _segments[i].Memory.Length;
         }
-        var firstSegment = _segments[0];
-        var lastSegment = _segments[^1];
+        ReusableByteSequenceSegment firstSegment = _segments[0];
+        ReusableByteSequenceSegment lastSegment = _segments[^1];
         return new ReadOnlySequence<byte>(firstSegment, 0, lastSegment, lastSegment.Memory.Length);
     }
 
     public void Reset()
     {
-        foreach (var item in _segments) {
+        foreach (ReusableByteSequenceSegment item in _segments) {
             item.Reset();
             _segmentPool.Push(item);
         }

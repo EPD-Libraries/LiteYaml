@@ -1,8 +1,8 @@
+using LiteYaml.Parser;
 using NUnit.Framework;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Text;
-using LiteYaml.Parser;
 
 namespace LiteYaml.Tests.Parser
 {
@@ -12,7 +12,7 @@ namespace LiteYaml.Tests.Parser
         [Test]
         public void IsNullScalar()
         {
-            var parser = CreateParser(
+            YamlParser parser = CreateParser(
             [
                 "- null",
                 "- ",
@@ -37,7 +37,7 @@ namespace LiteYaml.Tests.Parser
         [Test]
         public void SkipCurrentNode()
         {
-            var parser = CreateParser(
+            YamlParser parser = CreateParser(
             [
                 "a: 1",
                 "b: { ba: 2 }",
@@ -78,7 +78,7 @@ namespace LiteYaml.Tests.Parser
         [Test]
         public void Tag_BlockMapping()
         {
-            var parser = CreateParser(
+            YamlParser parser = CreateParser(
             [
                 "!tag1",
                 "a: 100",
@@ -87,14 +87,14 @@ namespace LiteYaml.Tests.Parser
 
             parser.SkipAfter(ParseEventType.DocumentStart);
             Assert.That(parser.CurrentEventType, Is.EqualTo(ParseEventType.MappingStart));
-            Assert.That(parser.TryGetCurrentTag(out var tag), Is.True);
+            Assert.That(parser.TryGetCurrentTag(out Tag? tag), Is.True);
             Assert.That(tag.ToString(), Is.EqualTo("!tag1"));
         }
 
         [Test]
         public void UnityFormat()
         {
-            var parser = CreateParser(
+            YamlParser parser = CreateParser(
             [
                 "%YAML 1.1",
                 "%TAG !u! tag:unity3d.com,2011:",
@@ -196,7 +196,7 @@ namespace LiteYaml.Tests.Parser
         [Test]
         public void EmptyElementInSequence()
         {
-            var parser = CreateParser(
+            YamlParser parser = CreateParser(
             [
                 "keywords:",
                 "- ",
@@ -223,14 +223,14 @@ namespace LiteYaml.Tests.Parser
 
         static YamlParser CreateParser(IEnumerable<string> lines)
         {
-            var yaml = string.Join('\n', lines);
-            var sequence = new ReadOnlySequence<byte>(Encoding.UTF8.GetBytes(yaml));
+            string yaml = string.Join('\n', lines);
+            ReadOnlySequence<byte> sequence = new(Encoding.UTF8.GetBytes(yaml));
             return new YamlParser(sequence);
         }
 
         static void CreateParser(string yaml, out YamlParser x)
         {
-            var sequence = new ReadOnlySequence<byte>(Encoding.UTF8.GetBytes(yaml));
+            ReadOnlySequence<byte> sequence = new(Encoding.UTF8.GetBytes(yaml));
             x = new YamlParser(sequence);
         }
     }

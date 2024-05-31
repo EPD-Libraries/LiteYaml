@@ -89,24 +89,32 @@ namespace LiteYaml.Internal
         public const byte FLOW_SEQUENCE_END = (byte)']';
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsAlphaNumericDashOrUnderscore(byte code) => code is
+        public static bool IsAlphaNumericDashOrUnderscore(byte code)
+        {
+            return code is
             >= (byte)'0' and <= (byte)'9' or
             >= (byte)'A' and <= (byte)'Z' or
             >= (byte)'a' and <= (byte)'z' or
             (byte)'_' or
             (byte)'-';
+        }
 
         // Spec: https://yaml.org/spec/1.2.2/#rule-ns-word-char
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsWordChar(byte code) => code is
+        public static bool IsWordChar(byte code)
+        {
+            return code is
             >= (byte)'0' and <= (byte)'9' or
             >= (byte)'A' and <= (byte)'Z' or
             >= (byte)'a' and <= (byte)'z' or
             (byte)'-';
+        }
 
         // Spec: https://yaml.org/spec/1.2.2/#rule-ns-uri-char
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsUriChar(byte code) => code is
+        public static bool IsUriChar(byte code)
+        {
+            return code is
             >= (byte)'0' and <= (byte)'9' or
             >= (byte)'A' and <= (byte)'Z' or
             >= (byte)'a' and <= (byte)'z' or
@@ -132,10 +140,13 @@ namespace LiteYaml.Internal
             (byte)')' or
             (byte)'[' or
             (byte)']';
+        }
 
         // Spec: https://yaml.org/spec/1.2.2/#rule-ns-tag-char
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsTagChar(byte code) => code is
+        public static bool IsTagChar(byte code)
+        {
+            return code is
             >= (byte)'0' and <= (byte)'9' or
             >= (byte)'A' and <= (byte)'Z' or
             >= (byte)'a' and <= (byte)'z' or
@@ -162,45 +173,72 @@ namespace LiteYaml.Internal
                        // (byte)'[' or
                        // (byte)']'
             ;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsAscii(byte code) => code <= '\x7F';
+        public static bool IsAscii(byte code)
+        {
+            return code <= '\x7F';
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsNumber(byte code) => code is >= (byte)'0' and <= (byte)'9';
+        public static bool IsNumber(byte code)
+        {
+            return code is >= (byte)'0' and <= (byte)'9';
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsEmpty(byte code) => code is SPACE or TAB or LF or CR;
+        public static bool IsEmpty(byte code)
+        {
+            return code is SPACE or TAB or LF or CR;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsLineBreak(byte code) => code is LF or CR;
+        public static bool IsLineBreak(byte code)
+        {
+            return code is LF or CR;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsBlank(byte code) => code is SPACE or TAB;
+        public static bool IsBlank(byte code)
+        {
+            return code is SPACE or TAB;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsNumberRepresentation(byte code) => code is
+        public static bool IsNumberRepresentation(byte code)
+        {
+            return code is
             >= (byte)'0' and <= (byte)'9' or
             (byte)'+' or (byte)'-' or (byte)'.';
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsHex(byte code) => code is
+        public static bool IsHex(byte code)
+        {
+            return code is
             >= (byte)'0' and <= (byte)'9' or
             >= (byte)'A' and <= (byte)'F' or
             >= (byte)'a' and <= (byte)'f';
+        }
 
         // Spec: https://yaml.org/spec/1.2.2/#rule-c-flow-indicator
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsAnyFlowSymbol(byte code) => code is
+        public static bool IsAnyFlowSymbol(byte code)
+        {
+            return code is
             (byte)',' or (byte)'[' or (byte)']' or (byte)'{' or (byte)'}';
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static byte AsHex(byte code) => code switch
+        public static byte AsHex(byte code)
         {
-            >= (byte)'0' and <= (byte)'9' => (byte)(code - (byte)'0'),
-            >= (byte)'a' and <= (byte)'f' => (byte)(code - (byte)'a' + 10),
-            >= (byte)'A' and <= (byte)'F' => (byte)(code - (byte)'A' + 10),
-            _ => throw new InvalidOperationException()
-        };
+            return code switch {
+                >= (byte)'0' and <= (byte)'9' => (byte)(code - (byte)'0'),
+                >= (byte)'a' and <= (byte)'f' => (byte)(code - (byte)'a' + 10),
+                >= (byte)'A' and <= (byte)'F' => (byte)(code - (byte)'A' + 10),
+                _ => throw new InvalidOperationException()
+            };
+        }
     }
 }

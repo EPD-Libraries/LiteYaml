@@ -1,6 +1,6 @@
+using LiteYaml.Internal;
 using NUnit.Framework;
 using System;
-using LiteYaml.Internal;
 
 namespace LiteYaml.Tests
 {
@@ -10,9 +10,8 @@ namespace LiteYaml.Tests
         [Test]
         public void Enqueue()
         {
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                var q = new InsertionQueue<int>(4);
+            Assert.Throws<InvalidOperationException>(() => {
+                InsertionQueue<int> q = new(4);
                 q.Enqueue(100);
                 q.Enqueue(200);
                 q.Enqueue(300);
@@ -30,7 +29,7 @@ namespace LiteYaml.Tests
         [Test]
         public void Insert()
         {
-            var q = new InsertionQueue<int>(4);
+            InsertionQueue<int> q = new(4);
             q.Enqueue(100);
             q.Enqueue(200);
             q.Enqueue(300);
@@ -48,7 +47,7 @@ namespace LiteYaml.Tests
         [Test]
         public void Insert_ProgressingBuffer()
         {
-            var q = new InsertionQueue<int>(4);
+            InsertionQueue<int> q = new(4);
             q.Enqueue(100);
             q.Enqueue(200);
             q.Dequeue();

@@ -1,6 +1,6 @@
+using LiteYaml.Internal;
 using System.Buffers;
 using System.Runtime.CompilerServices;
-using LiteYaml.Internal;
 
 namespace LiteYaml.Parser;
 
@@ -111,7 +111,7 @@ public ref partial struct YamlParser
         CurrentEventType = default;
         _lastAnchorId = -1;
 
-        _anchors = _anchorsBufferStatic ??= new Dictionary<string, int>();
+        _anchors = _anchorsBufferStatic ??= [];
         _anchors.Clear();
 
         _stateStack = _stateStackBufferStatic ??= new ExpandBuffer<ParseState>(16);
@@ -247,8 +247,10 @@ public ref partial struct YamlParser
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void ReadWithVerify(ParseEventType eventType)
     {
-        if (CurrentEventType != eventType)
+        if (CurrentEventType != eventType) {
             throw new YamlParserException(CurrentMark, $"Did not find expected event : `{eventType}`");
+        }
+
         Read();
     }
 
@@ -282,7 +284,7 @@ public ref partial struct YamlParser
                 break;
 
             case ParseEventType.SequenceStart: {
-                var depth = 1;
+                int depth = 1;
                 while (Read()) {
                     switch (CurrentEventType) {
                         case ParseEventType.SequenceStart:
@@ -296,7 +298,7 @@ public ref partial struct YamlParser
                 break;
             }
             case ParseEventType.MappingStart: {
-                var depth = 1;
+                int depth = 1;
                 while (Read()) {
                     switch (CurrentEventType) {
                         case ParseEventType.MappingStart:
@@ -410,10 +412,10 @@ public ref partial struct YamlParser
             case TokenType.Alias:
                 PopState();
 
-                var name = _tokenizer.TakeCurrentTokenContent<Scalar>().ToString();  // TODO: Avoid `ToString`
+                string name = _tokenizer.TakeCurrentTokenContent<Scalar>().ToString();  // TODO: Avoid `ToString`
                 _tokenizer.Read();
 
-                if (_anchors.TryGetValue(name, out var aliasId)) {
+                if (_anchors.TryGetValue(name, out int aliasId)) {
                     _currentAnchor = new Anchor(name, aliasId);
                     CurrentEventType = ParseEventType.Alias;
                     return;
@@ -421,8 +423,8 @@ public ref partial struct YamlParser
                 throw new YamlParserException(CurrentMark, "While parsing node, found unknown anchor");
 
             case TokenType.Anchor: {
-                var anchorName = _tokenizer.TakeCurrentTokenContent<Scalar>().ToString(); // TODO: Avoid `ToString`
-                var anchorId = RegisterAnchor(anchorName);
+                string anchorName = _tokenizer.TakeCurrentTokenContent<Scalar>().ToString(); // TODO: Avoid `ToString`
+                int anchorId = RegisterAnchor(anchorName);
                 _currentAnchor = new Anchor(anchorName, anchorId);
                 _tokenizer.Read();
                 if (CurrentTokenType == TokenType.Tag) {
@@ -435,8 +437,8 @@ public ref partial struct YamlParser
                 _currentTag = _tokenizer.TakeCurrentTokenContent<Tag>();
                 _tokenizer.Read();
                 if (CurrentTokenType == TokenType.Anchor) {
-                    var anchorName = _tokenizer.TakeCurrentTokenContent<Scalar>().ToString();
-                    var anchorId = RegisterAnchor(anchorName);
+                    string anchorName = _tokenizer.TakeCurrentTokenContent<Scalar>().ToString();
+                    int anchorId = RegisterAnchor(anchorName);
                     _currentAnchor = new Anchor(anchorName, anchorId);
 
                     // Unity compatible mode
@@ -712,8 +714,8 @@ public ref partial struct YamlParser
 
         if (CurrentTokenType == TokenType.ValueStart) {
             _tokenizer.Read();
-            if (CurrentTokenType != TokenType.FlowEntryStart &&
-                CurrentTokenType != TokenType.FlowMappingEnd) {
+            if (CurrentTokenType is not TokenType.FlowEntryStart and
+                not TokenType.FlowMappingEnd) {
                 PushState(ParseState.FlowMappingKey);
                 ParseNode(false, false);
                 return;
@@ -830,7 +832,7 @@ public ref partial struct YamlParser
 
     int RegisterAnchor(string anchorName)
     {
-        var newId = ++_lastAnchorId;
+        int newId = ++_lastAnchorId;
         _anchors[anchorName] = newId; // TODO: Avoid `ToString`
         return newId;
     }

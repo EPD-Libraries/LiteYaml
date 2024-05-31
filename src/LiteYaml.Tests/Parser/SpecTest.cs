@@ -1,11 +1,11 @@
+using LiteYaml.Internal;
+using LiteYaml.Parser;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Text.RegularExpressions;
-using LiteYaml.Internal;
-using LiteYaml.Parser;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace LiteYaml.Tests.Parser
 {
@@ -1337,7 +1337,7 @@ namespace LiteYaml.Tests.Parser
         public void Ex6_27_InvalidTagShorthands()
         {
             Assert.Throws<YamlParserException>(() => {
-                var parser = YamlParser.FromBytes(Encoding.UTF8.GetBytes(SpecExamples.Ex6_27b));
+                YamlParser parser = YamlParser.FromBytes(Encoding.UTF8.GetBytes(SpecExamples.Ex6_27b));
                 while (parser.Read()) {
                 }
             });
@@ -1799,7 +1799,7 @@ namespace LiteYaml.Tests.Parser
         public void Ex7_22_InvalidImplicitKeys()
         {
             Assert.Throws<YamlParserException>(() => {
-                var parser = YamlParser.FromBytes(Encoding.UTF8.GetBytes(SpecExamples.Ex7_22));
+                YamlParser parser = YamlParser.FromBytes(Encoding.UTF8.GetBytes(SpecExamples.Ex7_22));
                 while (parser.Read()) {
                 }
             });
@@ -1890,19 +1890,19 @@ namespace LiteYaml.Tests.Parser
         public void Ex8_03_InvalidBlockScalarIndentationIndicators()
         {
             Assert.Throws<YamlParserException>(() => {
-                var parser = YamlParser.FromBytes(Encoding.UTF8.GetBytes(SpecExamples.Ex8_3a));
+                YamlParser parser = YamlParser.FromBytes(Encoding.UTF8.GetBytes(SpecExamples.Ex8_3a));
                 while (parser.Read()) {
                 }
             });
 
             Assert.Throws<YamlParserException>(() => {
-                var parser = YamlParser.FromBytes(Encoding.UTF8.GetBytes(SpecExamples.Ex8_3b));
+                YamlParser parser = YamlParser.FromBytes(Encoding.UTF8.GetBytes(SpecExamples.Ex8_3b));
                 while (parser.Read()) {
                 }
             });
 
             Assert.Throws<YamlParserException>(() => {
-                var parser = YamlParser.FromBytes(Encoding.UTF8.GetBytes(SpecExamples.Ex8_3c));
+                YamlParser parser = YamlParser.FromBytes(Encoding.UTF8.GetBytes(SpecExamples.Ex8_3c));
                 while (parser.Read()) {
                 }
             });
@@ -2290,7 +2290,7 @@ namespace LiteYaml.Tests.Parser
             if (scalarValue is null) {
                 return new TestParseResult(type, Scalar.Null);
             }
-            var bytes = Encoding.UTF8.GetBytes(scalarValue);
+            byte[] bytes = Encoding.UTF8.GetBytes(scalarValue);
             return new TestParseResult(type, new Scalar(bytes), typeof(string));
         }
 
@@ -2299,16 +2299,16 @@ namespace LiteYaml.Tests.Parser
             if (scalarValue is null) {
                 return new TestParseResult(type, Scalar.Null);
             }
-            var bytes = Encoding.UTF8.GetBytes(scalarValue is IFormattable formattable ? formattable.ToString(null, CultureInfo.InvariantCulture) : scalarValue.ToString()!);
+            byte[] bytes = Encoding.UTF8.GetBytes(scalarValue is IFormattable formattable ? formattable.ToString(null, CultureInfo.InvariantCulture) : scalarValue.ToString()!);
             return new TestParseResult(type, new Scalar(bytes), typeof(TScalar));
         }
 
         static void AssertParseEventsThenThrows<TException>(string yaml, IReadOnlyList<TestParseResult> expects, string exceptionLike)
             where TException : Exception
         {
-            var ex = Assert.Throws<TException>(
+            TException? ex = Assert.Throws<TException>(
                 code: () => {
-                    var parser = YamlParser.FromBytes(Encoding.UTF8.GetBytes(yaml));
+                    YamlParser parser = YamlParser.FromBytes(Encoding.UTF8.GetBytes(yaml));
                     try {
                         AssertParseResults(ref parser, expects);
                     }
@@ -2327,7 +2327,7 @@ namespace LiteYaml.Tests.Parser
 
         static void AssertParseEvents(string yaml, IReadOnlyList<TestParseResult> expects)
         {
-            var parser = YamlParser.FromBytes(Encoding.UTF8.GetBytes(yaml));
+            YamlParser parser = YamlParser.FromBytes(Encoding.UTF8.GetBytes(yaml));
 
             AssertParseResults(ref parser, expects);
 
@@ -2338,8 +2338,8 @@ namespace LiteYaml.Tests.Parser
 
         static void AssertParseResults(ref YamlParser parser, IReadOnlyList<TestParseResult> expects)
         {
-            for (var i = 0; i < expects.Count; i++) {
-                var expect = expects[i];
+            for (int i = 0; i < expects.Count; i++) {
+                TestParseResult expect = expects[i];
                 if (!parser.Read()) {
                     Assert.Fail($"End of stream, but expected: {expect.Type} {expect.Scalar} at {i}");
                 }
@@ -2349,23 +2349,23 @@ namespace LiteYaml.Tests.Parser
                 }
                 if (expect.Scalar != null) {
                     if (expect.ExpectScalarDataType == typeof(int)) {
-                        expect.Scalar.TryGetInt32(out var expectValue);
-                        if (!parser.TryGetScalarAsInt32(out var actualValue) || expectValue != actualValue) {
+                        expect.Scalar.TryGetInt32(out int expectValue);
+                        if (!parser.TryGetScalarAsInt32(out int actualValue) || expectValue != actualValue) {
                             Assert.Fail($"Expected {expectValue} ({expect}) at {i}\n" +
                                         $"  But was: {actualValue}");
                         }
                     }
                     else if (expect.ExpectScalarDataType == typeof(float) ||
                              expect.ExpectScalarDataType == typeof(double)) {
-                        expect.Scalar.TryGetDouble(out var expectValue);
-                        if (!parser.TryGetScalarAsDouble(out var actualValue) || Math.Abs(expectValue - actualValue) > 0.001) {
+                        expect.Scalar.TryGetDouble(out double expectValue);
+                        if (!parser.TryGetScalarAsDouble(out double actualValue) || Math.Abs(expectValue - actualValue) > 0.001) {
                             Assert.Fail($"Expected {expectValue} of {expect} at {i}\n" +
                                         $"  But was: {actualValue}");
                         }
                     }
                     else if (expect.ExpectScalarDataType == typeof(bool)) {
-                        expect.Scalar.TryGetBool(out var expectValue);
-                        if (!parser.TryGetScalarAsBool(out var actualValue) || actualValue != expectValue) {
+                        expect.Scalar.TryGetBool(out bool expectValue);
+                        if (!parser.TryGetScalarAsBool(out bool actualValue) || actualValue != expectValue) {
                             Assert.Fail($"Expected {expectValue} of {expect} at {i}\n" +
                                         $"  But was: {actualValue} of {parser.GetScalarAsString()}");
                         }
