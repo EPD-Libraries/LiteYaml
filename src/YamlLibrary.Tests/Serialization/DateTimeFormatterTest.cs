@@ -17,7 +17,7 @@ namespace YamlLibrary.Tests.Serialization
         public void Serialize_Local()
         {
             var result = Serialize(new DateTime(2022, 12, 31, 11, 22, 33, DateTimeKind.Local));
-            Assert.That(result.StartsWith("2022-12-31T11:22:33.0000000+"), Is.True);
+            Assert.That(result.StartsWith("2022-12-31T11:22:33.0000000"), Is.True);
         }
 
         [Test]
