@@ -48,9 +48,23 @@ internal static class EmitStringAnalyzer
                           last == YamlCodes.SPACE ||
                           first is '&' or '*' or '?' or '|' or '-' or '<' or '>' or '=' or '!' or '%' or '@' or '.';
 
+        int numbers = 0;
         int lines = 1;
+
         foreach (char ch in chars) {
             switch (ch) {
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                    numbers++;
+                    break;
                 case ':':
                 case '{':
                 case '[':
@@ -71,7 +85,7 @@ internal static class EmitStringAnalyzer
         if (last == '\n') {
             lines--;
         }
-        return new EmitStringInfo(lines, needsQuotes, isReservedWord);
+        return new EmitStringInfo(lines, needsQuotes || numbers == chars.Length, isReservedWord);
     }
 
     internal static StringBuilder BuildLiteralScalar(ReadOnlySpan<char> originalValue, int indentCharCount)
