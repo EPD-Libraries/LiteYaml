@@ -22,7 +22,7 @@ readonly struct EmitStringInfo(int lines, bool needsQuotes, bool isReservedWord)
 internal static class EmitStringAnalyzer
 {
     [ThreadStatic]
-    static StringBuilder? stringBuilderThreadStatic;
+    static StringBuilder? _stringBuilderThreadStatic;
 
     static char[] _whiteSpaces =
     [
@@ -87,7 +87,7 @@ internal static class EmitStringAnalyzer
             chompHint = '-';
         }
 
-        StringBuilder stringBuilder = (stringBuilderThreadStatic ??= new StringBuilder(1024)).Clear();
+        StringBuilder stringBuilder = (_stringBuilderThreadStatic ??= new StringBuilder(1024)).Clear();
         stringBuilder.Append('|');
         if (chompHint > 0) {
             stringBuilder.Append(chompHint);
@@ -258,7 +258,7 @@ internal static class EmitStringAnalyzer
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static StringBuilder GetStringBuilder()
     {
-        return (stringBuilderThreadStatic ??= new StringBuilder(1024)).Clear();
+        return (_stringBuilderThreadStatic ??= new StringBuilder(1024)).Clear();
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -1,6 +1,5 @@
-namespace LiteYaml.Parser
+namespace LiteYaml.Parser;
+
+public interface ITokenContent
 {
-    public interface ITokenContent
-    {
-    }
 }

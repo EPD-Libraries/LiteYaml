@@ -145,7 +145,7 @@ class Scalar : ITokenContent
         Span<byte> span = AsSpan();
         switch (span.Length) {
             case 0:
-            case 1 when span[0] == YamlCodes.NullAlias:
+            case 1 when span[0] == YamlCodes.NULL_ALIAS:
             case 4 when span.SequenceEqual(YamlCodes.Null0) ||
                         span.SequenceEqual(YamlCodes.Null1) ||
                         span.SequenceEqual(YamlCodes.Null2):

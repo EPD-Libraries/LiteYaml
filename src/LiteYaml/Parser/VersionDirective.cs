@@ -1,10 +1,8 @@
-#nullable enable
-namespace LiteYaml.Parser
+namespace LiteYaml.Parser;
+
+readonly struct VersionDirective(int major, int minor) : ITokenContent
 {
-    struct VersionDirective(int major, int minor) : ITokenContent
-    {
-        public readonly int Major = major;
-        public readonly int Minor = minor;
-    }
+    public readonly int Major = major;
+    public readonly int Minor = minor;
 }
 

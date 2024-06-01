@@ -89,7 +89,7 @@ public ref partial struct YamlParser
 
     public readonly bool End => CurrentEventType == ParseEventType.StreamEnd;
 
-    TokenType CurrentTokenType {
+    readonly TokenType CurrentTokenType {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get => _tokenizer.CurrentTokenType;
     }
@@ -801,7 +801,7 @@ public ref partial struct YamlParser
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    void PushState(ParseState state)
+    readonly void PushState(ParseState state)
     {
         _stateStack.Add(state);
     }
@@ -838,7 +838,7 @@ public ref partial struct YamlParser
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    void ThrowIfCurrentTokenUnless(TokenType expectedTokenType)
+    readonly void ThrowIfCurrentTokenUnless(TokenType expectedTokenType)
     {
         if (CurrentTokenType != expectedTokenType) {
             throw new YamlParserException(_tokenizer.CurrentMark,

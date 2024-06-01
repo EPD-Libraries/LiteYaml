@@ -1,15 +1,14 @@
-namespace LiteYaml.Parser
-{
-    public struct Marker(int position, int line, int col)
-    {
-        public int Position = position;
-        public int Line = line;
-        public int Col = col;
+namespace LiteYaml.Parser;
 
-        public override string ToString()
-        {
-            return $"Line: {Line}, Col: {Col}, Idx: {Position}";
-        }
+public struct Marker(int position, int line, int col)
+{
+    public int Position = position;
+    public int Line = line;
+    public int Col = col;
+
+    public override readonly string ToString()
+    {
+        return $"Line: {Line}, Col: {Col}, Idx: {Position}";
     }
 }
 
