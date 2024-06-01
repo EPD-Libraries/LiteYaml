@@ -109,6 +109,16 @@ public ref struct Utf8YamlEmitter
                     case EmitState.BlockMappingKey:
                         throw new YamlEmitterException(
                             "To start block-sequence in the mapping key is not supported.");
+                    case EmitState.BlockMappingValue: {
+                        Span<byte> output = _writer.GetSpan(GetTagBufferLength() + 1);
+                        int offset = 0;
+                        if (TryWriteTag(output, ref offset)) {
+                            output[offset++] = YamlCodes.SPACE;
+                        }
+
+                        _writer.Advance(offset);
+                        break;
+                    }
                 }
 
                 PushState(EmitState.BlockSequenceEntry);
@@ -118,7 +128,6 @@ public ref struct Utf8YamlEmitter
                 switch (CurrentState) {
                     case EmitState.BlockMappingKey:
                         throw new YamlEmitterException("To start flow-sequence in the mapping key is not supported.");
-
                     case EmitState.BlockSequenceEntry: {
                         Span<byte> output = _writer.GetSpan(_currentIndentLevel * _options.IndentWidth + _blockSequenceEntryHeader.Length + 1);
                         int offset = 0;
