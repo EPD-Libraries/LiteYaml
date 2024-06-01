@@ -1,9 +1,6 @@
 # LiteYaml
 
-[![GitHub license](https://img.shields.io/github/license/hadashiA/LiteYaml)](./LICENSE)
-![Unity 2022.2+](https://img.shields.io/badge/unity-2021.3+-000.svg)
-[![NuGet](https://img.shields.io/nuget/v/LiteYaml.svg)](https://www.nuget.org/packages/LiteYaml)
-[![openupm](https://img.shields.io/npm/v/jp.hadashikick.vyaml?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/jp.hadashikick.vyaml/)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg?logo=github&logoColor=5751ff&labelColor=2A2C33&color=5751ff&style=for-the-badge)](https://github.com/EPD-Libraries/LiteYaml/blob/master/License.md) [![NuGet](https://img.shields.io/nuget/dt/LiteYaml.svg?label=NuGet&logo=NuGet&labelColor=2A2C33&color=37c75e&style=for-the-badge)](https://www.nuget.org/packages/LiteYaml)
 
 Lightweight yaml parser and emitter stripped from [VYaml](https://github.com/hadashiA/VYaml)
 
