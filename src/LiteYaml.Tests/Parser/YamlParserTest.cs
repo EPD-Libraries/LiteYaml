@@ -221,6 +221,19 @@ public class YamlParserTest
         Assert.That(parser.CurrentEventType, Is.EqualTo(ParseEventType.DocumentEnd));
     }
 
+    [Test]
+    public void QuotedNumberMustNotBeAnInteger()
+    {
+        YamlParser parser = CreateParser([
+            "'012345'"
+        ]);
+
+        parser.SkipAfter(ParseEventType.DocumentStart);
+        Assert.That(parser.CurrentEventType, Is.EqualTo(ParseEventType.Scalar));
+        Assert.That(parser.TryReadScalarAsInt32(out _), Is.EqualTo(false));
+        Assert.That(parser.ReadScalarAsString(), Is.EqualTo("012345"));
+    }
+
     static YamlParser CreateParser(IEnumerable<string> lines)
     {
         string yaml = string.Join('\n', lines);

@@ -37,7 +37,9 @@ class Scalar : ITokenContent
     public static readonly Scalar Null = new(0);
 
     public int Length { get; private set; }
-    byte[] _buffer;
+    public TokenType Type { get; set; }
+
+    private byte[] _buffer;
 
     public Scalar(int capacity)
     {
@@ -142,6 +144,10 @@ class Scalar : ITokenContent
     /// </remarks>
     public bool IsNull()
     {
+        if (IsStringScalar()) {
+            return false;
+        }
+
         Span<byte> span = AsSpan();
         switch (span.Length) {
             case 0:
@@ -162,6 +168,11 @@ class Scalar : ITokenContent
     /// </remarks>
     public bool TryGetBool(out bool value)
     {
+        if (IsStringScalar()) {
+            value = default;
+            return false;
+        }
+
         Span<byte> span = AsSpan();
         switch (span.Length) {
             case 4 when span.SequenceEqual(YamlCodes.True0) ||
@@ -182,6 +193,11 @@ class Scalar : ITokenContent
 
     public bool TryGetInt32(out int value)
     {
+        if (IsStringScalar()) {
+            value = default;
+            return false;
+        }
+
         Span<byte> span = AsSpan();
 
         if (Utf8Parser.TryParse(span, out value, out int bytesConsumed) &&
@@ -209,6 +225,11 @@ class Scalar : ITokenContent
 
     public bool TryGetInt64(out long value)
     {
+        if (IsStringScalar()) {
+            value = default;
+            return false;
+        }
+
         Span<byte> span = AsSpan();
         if (Utf8Parser.TryParse(span, out value, out int bytesConsumed) &&
             bytesConsumed == span.Length) {
@@ -236,6 +257,11 @@ class Scalar : ITokenContent
 
     public bool TryGetUInt32(out uint value)
     {
+        if (IsStringScalar()) {
+            value = default;
+            return false;
+        }
+
         Span<byte> span = AsSpan();
 
         if (Utf8Parser.TryParse(span, out value, out int bytesConsumed) &&
@@ -256,6 +282,11 @@ class Scalar : ITokenContent
 
     public bool TryGetUInt64(out ulong value)
     {
+        if (IsStringScalar()) {
+            value = default;
+            return false;
+        }
+
         Span<byte> span = AsSpan();
 
         if (Utf8Parser.TryParse(span, out value, out int bytesConsumed) &&
@@ -275,6 +306,11 @@ class Scalar : ITokenContent
 
     public bool TryGetFloat(out float value)
     {
+        if (IsStringScalar()) {
+            value = default;
+            return false;
+        }
+
         Span<byte> span = AsSpan();
         if (Utf8Parser.TryParse(span, out value, out int bytesConsumed) &&
             bytesConsumed == span.Length) {
@@ -317,6 +353,11 @@ class Scalar : ITokenContent
 
     public bool TryGetDouble(out double value)
     {
+        if (IsStringScalar()) {
+            value = default;
+            return false;
+        }
+
         Span<byte> span = AsSpan();
         if (Utf8Parser.TryParse(span, out value, out int bytesConsumed) &&
             bytesConsumed == span.Length) {
@@ -475,5 +516,11 @@ class Scalar : ITokenContent
         Array.Copy(_buffer, 0, newBuffer, 0, Length);
         ArrayPool<byte>.Shared.Return(_buffer);
         _buffer = newBuffer;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private bool IsStringScalar()
+    {
+        return Type is TokenType.DoubleQuotedScaler or TokenType.SingleQuotedScaler;
     }
 }

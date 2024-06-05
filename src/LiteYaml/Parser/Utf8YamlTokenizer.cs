@@ -113,6 +113,10 @@ public ref struct Utf8YamlTokenizer
     internal T TakeCurrentTokenContent<T>() where T : ITokenContent
     {
         Token result = _currentToken;
+        if (result.Content is Scalar scalar) {
+            scalar.Type = _currentToken.Type;
+        }
+
         _currentToken = default;
         return (T)result.Content!;
     }
@@ -299,7 +303,7 @@ public ref struct Utf8YamlTokenizer
         RemoveSimpleKeyCandidate();
         _simpleKeyAllowed = false;
 
-        Advance(1);
+        Advance(offset: 1);
 
         Scalar name = ScalarPool.Shared.Rent();
         try {
